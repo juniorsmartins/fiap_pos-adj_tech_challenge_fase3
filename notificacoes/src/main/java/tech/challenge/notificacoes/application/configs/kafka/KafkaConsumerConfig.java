@@ -1,6 +1,5 @@
-package fiap.adj.fase3.tech_challenge_hospital.application.configs.kafka;
+package tech.challenge.notificacoes.application.configs.kafka;
 
-import fiap.adj.fase3.tech_challenge_hospital.application.dtos.external.MensagemKafka;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -12,7 +11,7 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.springframework.kafka.support.serializer.JsonSerializer;
+import tech.challenge.notificacoes.application.dtos.MensagemKafka;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,13 +26,19 @@ public class KafkaConsumerConfig {
     @Bean
     public Map<String, Object> consumerConfigs() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaPropertiesConfig.bootstrapServers); // Servidor Kafka
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaPropertiesConfig.bootstrapServers); // Conexão com o servidor Kafka
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class); // Usar StringDeserializer para desserializar chaves
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class); // Usar JsonDeserializer para desserializar mensagens JSON
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "grupo-mensagem-kafka"); // Definir um ID de grupo
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"); // Ler desde o início do tópico se não houver offset
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*"); // Permitir desserialização de qualquer pacote quando usar asterisco
-        props.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "grupo-notificacoes"); // ID do grupo de consumidores
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"); // earliest = lê tudo desde o começo se não houver offset, latest = começa do fim
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*"); // 🔑 Aceitar objetos de qualquer pacote
+        props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false); // 🔑 Ignora headers __TypeId__
+        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "tech.challenge.notificacoes.application.dtos.MensagemKafka"); // 🔑 Sempre deserializar para essa classe
+        props.put(JsonDeserializer.TYPE_MAPPINGS, "MensagemKafka:tech.challenge.notificacoes.application.dtos.MensagemKafka"); // Opcional: alias para tipos
+        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 100); // Quantas mensagens por poll
+        props.put(ConsumerConfig.FETCH_MIN_BYTES_CONFIG, 1); // Bytes mínimos por poll
+        props.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, 500); // Tempo máximo para completar poll
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false); // Desabilitar commit automático de offsets
         return props;
     }
 
