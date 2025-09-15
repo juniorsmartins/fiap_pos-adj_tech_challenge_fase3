@@ -3,6 +3,15 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/consultas" />
+        <option name="gradleJvm" value="21 (2)" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/consultas" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/notificacoes" />
         <option name="gradleJvm" value="21 (2)" />
         <option name="modules">

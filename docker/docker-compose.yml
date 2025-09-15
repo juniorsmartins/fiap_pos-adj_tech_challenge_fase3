@@ -1,6 +1,8 @@
 volumes:
-  database_hospital:
-    name: database_hospital
+  db_hospital:
+    name: db_hospital
+  db_consultas:
+    name: db_consultas
 
 networks:
   communication: # conexão com infra-local e acesso a internet - tipo bridge
@@ -69,7 +71,7 @@ services:
       args:
         APP_NAME: "notificacoes"
         APP_VERSION: "v0.0.1"
-        APP_DESCRIPTION: "Serviço de notificações."
+        APP_DESCRIPTION: "Serviço de Notificações."
     ports:
       - "9060:9060"
     deploy:
@@ -81,6 +83,37 @@ services:
     networks:
       - communication
     depends_on:
+      kafka:
+        condition: service_started
+
+  consultas:
+    container_name: consultas
+    image: juniorsmartins/consultas:v0.0.1
+    build:
+      context: ../consultas
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: "consultas"
+        APP_VERSION: "v0.0.1"
+        APP_DESCRIPTION: "Serviço de Consultas."
+    ports:
+      - "9055:9055"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+    environment:
+      - DB_HOST=challenge_database_consultas
+      - DB_NAME=database_consultas
+      - DB_PORT=5432
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    restart: on-failure
+    networks:
+      - communication
+    depends_on:
+      challenge_database_consultas:
+        condition: service_started
       kafka:
         condition: service_started
 
@@ -100,8 +133,27 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - database_hospital:/var/lib/postgresql/data
+      - db_hospital:/var/lib/postgresql/data
     networks:
       - communication
 
+  challenge_database_consultas:
+    container_name: challenge_database_consultas
+    image: postgres:16.0
+    ports:
+      - "5502:5432"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    restart: on-failure
+    environment:
+      - POSTGRES_DB=database_consultas
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - db_consultas:/var/lib/postgresql/data
+    networks:
+      - communication
 

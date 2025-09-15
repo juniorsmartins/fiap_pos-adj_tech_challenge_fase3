@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT:9050}
+  port: ${SERVER_PORT:9055}
 spring:
   application:
     name: tech_challenge_hospital
@@ -22,7 +22,7 @@ spring:
 
   datasource: # Configura o datasource do banco de dados.
     driver-class-name: org.postgresql.Driver # Especifica o driver JDBC (neste caso, para Postgres).
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:database_hospital} # Define a URL de conexao ao banco.
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:database_consultas} # Define a URL de conexao ao banco.
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
 
@@ -49,15 +49,8 @@ spring:
 
   sql: # Esta propriedade controla quando e como o Spring Boot inicializa o banco de dados com scripts SQL
     init:
-      mode: always
-      data-locations: classpath:db/data.sql
-
-  security: # Configuracao do Sprint Security
-    form-login:
-      page: /login # Define a URL personalizada (caso precise ser usada em outra parte do sistema)
-
-  messages: # Configuracao de mensagem para login personalizado
-    basename: messages
+      mode: never
+      data-locations: []
 
   kafka:
     bootstrap-servers: kafka:9092
@@ -65,7 +58,7 @@ spring:
       evento-informar-paciente-consulta: evento-informar-paciente-consulta
       evento-atualizar-status-consulta: evento-atualizar-status-consulta
     consumer:
-      group-id: grupo-mensagem-kafka
+      group-id: grupo-consultas
       auto-offset-reset: earliest # Ou latest, dependendo do caso de uso - earliest lê desde o início do tópico
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
