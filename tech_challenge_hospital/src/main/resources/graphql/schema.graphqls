@@ -1,0 +1,139 @@
+input UserRequestDto {
+    username: String!
+    password: String!
+}
+
+input PacienteRequestDto {
+    nome: String!
+    email: String!
+    user: UserRequestDto!
+}
+
+input MedicoRequestDto {
+    nome: String!
+    user: UserRequestDto!
+}
+
+input EnfermeiroRequestDto {
+    nome: String!
+    user: UserRequestDto!
+}
+
+input ConsultaRequestDto {
+    dataHora: String!
+    medicoId: ID!
+    pacienteId: ID!
+}
+
+input FiltroConsulta {
+    id: ID
+    dataHora: String
+    status: String
+    medicoId: ID
+    pacienteId: ID
+}
+
+input HistoricoMedicoRequestDto {
+    diagnostico: String!
+    prescricao: String!
+    exames: String
+    consultaId: ID!
+}
+
+input FiltroHistoricoMedico {
+    id: ID
+    diagnostico: String
+    prescricao: String
+    exames: String
+    consultaId: ID
+}
+
+
+type RoleResponseDto {
+    id: ID
+    name: String
+}
+
+type UserResponseDto {
+    id: ID
+    username: String
+    password: String
+    enabled: Boolean
+    roles: [RoleResponseDto]
+}
+
+type PacienteResponseDto {
+    id: ID
+    nome: String
+    email: String
+    user: UserResponseDto
+}
+
+type MedicoResponseDto {
+    id: ID
+    nome: String
+    user: UserResponseDto
+}
+
+type EnfermeiroResponseDto {
+    id: ID
+    nome: String
+    user: UserResponseDto
+}
+
+type ConsultaResponseDto {
+    id: ID
+    dataHora: String
+    status: String
+    medico: MedicoResponseDto
+    paciente: PacienteResponseDto
+}
+
+type HistoricoMedicoResponseDto {
+    id: ID
+    diagnostico: String
+    prescricao: String
+    exames: String
+    consulta: ConsultaResponseDto
+}
+
+
+type Query {
+    consultarPacientePorId(id: ID!): PacienteResponseDto!
+
+    consultarMedicoPorId(id: ID!): MedicoResponseDto!
+
+    consultarEnfermeiroPorId(id: ID!): EnfermeiroResponseDto!
+
+    consultarConsultaPorId(id: ID!): ConsultaResponseDto!
+    listarHistoricoDeConsultasPorIdPaciente(id: ID!): [ConsultaResponseDto!]!
+    pesquisarConsulta(filtro: FiltroConsulta): [ConsultaResponseDto!]!
+
+    consultarHistoricoMedicoPorIdConsulta(id: ID!): HistoricoMedicoResponseDto!
+    listarHistoricoMedicoPorIdPaciente(id: ID!): [HistoricoMedicoResponseDto!]!
+    pesquisarHistoricoMedico(filtro: FiltroHistoricoMedico): [HistoricoMedicoResponseDto!]!
+}
+
+
+type Mutation {
+    criarPaciente(request: PacienteRequestDto!): PacienteResponseDto
+    apagarPaciente(id: ID!): Boolean
+    atualizarPaciente(id: ID!, request: PacienteRequestDto!): PacienteResponseDto
+
+    criarMedico(request: MedicoRequestDto!): MedicoResponseDto
+    apagarMedico(id: ID!): Boolean
+    atualizarMedico(id: ID!, request: MedicoRequestDto!): MedicoResponseDto
+
+    criarEnfermeiro(request: EnfermeiroRequestDto!): EnfermeiroResponseDto
+    apagarEnfermeiro(id: ID!): Boolean
+    atualizarEnfermeiro(id: ID!, request: EnfermeiroRequestDto!): EnfermeiroResponseDto
+
+    criarConsulta(request: ConsultaRequestDto!): ConsultaResponseDto
+    cancelarConsulta(id: ID!): Boolean
+    atualizarConsulta(id: ID!, request: ConsultaRequestDto!): ConsultaResponseDto
+    concluirConsulta(id: ID!): Boolean
+
+    criarHistoricoMedico(request: HistoricoMedicoRequestDto!): HistoricoMedicoResponseDto
+    atualizarHistoricoMedico(request: HistoricoMedicoRequestDto!): HistoricoMedicoResponseDto
+}
+

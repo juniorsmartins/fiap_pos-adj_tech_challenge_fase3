@@ -1,0 +1,52 @@
+spring:
+
+  graphql:
+    graphiql:
+      enabled: true
+
+  datasource: # Configura o datasource do banco de dados.
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE # Define a URL de conexão ao banco.
+    username: sa
+    password:
+
+  # Configurações de JPA e de Hibernate
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
+    show-sql: true
+
+#  sql: # Habilita ou desabilita acionamento de script SQL
+#    init:
+#      mode: never
+#      data-locations: []
+  sql: # Esta propriedade controla quando e como o Spring Boot inicializa o banco de dados com scripts SQL
+    init:
+      mode: always
+      data-locations: classpath:db/data.sql
+
+  # Habilitar o console do H2 (opcional)
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  kafka:
+    bootstrap-servers: ${spring.embedded.kafka.brokers}  # Usa broker embutido
+    topic:
+      evento-informar-paciente-consulta: evento-informar-paciente-consulta
+      evento-atualizar-status-consulta: evento-atualizar-status-consulta
+    consumer:
+      group-id: grupo-mensagem-kafka
+      auto-offset-reset: earliest # Ou latest, dependendo do caso de uso - earliest lê desde o início do tópico
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "fiap.adj.fase3" # Pacote confiável para desserialização - Asterisco para confiar em todos
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer  # Para JSON
+      properties:
+        spring.json.add.type.headers: false  # Opcional: Evita headers de tipo para simplicidade

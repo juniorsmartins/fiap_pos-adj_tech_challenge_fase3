@@ -1,0 +1,85 @@
+server:
+  port: ${SERVER_PORT:9050}
+spring:
+  application:
+    name: tech_challenge_hospital
+  profiles:
+    active: default
+
+---
+spring:
+  config:
+    activate:
+      on-profile: default
+
+  graphql: # Fornece interface para testar requisicoes GraphQL
+    graphiql:
+      enabled: true # localhost:8080/graphiql
+
+  devtools:
+    restart:
+      additional-exclude: logs/**
+
+  datasource: # Configura o datasource do banco de dados.
+    driver-class-name: org.postgresql.Driver # Especifica o driver JDBC (neste caso, para Postgres).
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:challenge_user} # Define a URL de conexao ao banco.
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+
+  jpa: # Configura o JPA/Hibernate.
+    hibernate:
+      ddl-auto: create-drop # Define a estrategia de criacao do schema do banco de dados. Pode ser 'none', 'validate', 'update', 'create', 'create-drop'.
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl # Define a estrategia de nomeacao fisica (padrao). Usar CamelCase no Java e snake_case no banco.
+    defer-datasource-initialization: true # Adia a execução do import.sql até que o schema JPA esteja inicializado
+    properties:
+      hibernate: # Configuracoes avancadas do Hibernate.
+        format_sql: true # Formata o SQL gerado para melhor legibilidade.
+        use_sql_comments: true # Adiciona comentarios ao SQL gerado.
+        connection: # Define o nivel de isolamento de transacao.
+          isolation: 2 # Nivel 2 de isolamento recomendado para a maioria dos casos. - 1 = READ_UNCOMMITTED, 2 = READ_COMMITTED, 4 = REPEATABLE_READ, 8 = SERIALIZABLE
+        cache:
+          use_second_level_cache: false # Habilita cache de segundo nivel. False desabilitado para garantir dados sempre atualizados.
+          use_query_cache: false # Habilita cache de consultas. False desabilitado para garantir dados sempre atualizados.
+        type:
+          enumType:
+            type: pgsql_enum # Define o mapeamento de enums para PostgreSQL. Usar 'pgsql_enum' para suporte nativo a enums do PostgreSQL.
+    open-in-view: false #  Define se o Hibernate deve manter a sessao aberta durante a renderizacao da view. O false e recomendado para evitar problemas de performance e lazy loading.
+    show-sql: true # Habilita a exibicao do SQL gerado no console.
+
+  sql: # Esta propriedade controla quando e como o Spring Boot inicializa o banco de dados com scripts SQL
+    init:
+      mode: always
+      data-locations: classpath:db/data.sql
+
+  security: # Configuracao do Sprint Security
+    form-login:
+      page: /login # Define a URL personalizada (caso precise ser usada em outra parte do sistema)
+
+  messages: # Configuracao de mensagem para login personalizado
+    basename: messages
+
+  kafka:
+    bootstrap-servers: kafka:9092
+    topic:
+      evento-informar-paciente-consulta: evento-informar-paciente-consulta
+      evento-atualizar-status-consulta: evento-atualizar-status-consulta
+    consumer:
+      group-id: grupo-mensagem-kafka
+      auto-offset-reset: earliest # Ou latest, dependendo do caso de uso - earliest lê desde o início do tópico
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*" # Asterisco para confiar em todos os pacotes para deserializacao
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer  # Para JSON
+      properties:
+        spring.json.add.type.headers: false  # Opcional: Evita headers de tipo para simplicidade
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG # configuracao de log
+
