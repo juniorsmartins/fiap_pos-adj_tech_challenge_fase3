@@ -5,10 +5,10 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum MotivoKafkaEnum {
+public enum MotivoEnum {
 
-    AGENDAMENTO("AGENDAMEMTO"),
-    ALTERACAO("ALTERACAO");
+    AGENDAMENTO_CONSULTA("AGENDAMENTO_CONSULTA"),
+    ALTERACAO_CONSULTA("ALTERACAO_CONSULTA");
 
     private final String value;
 }

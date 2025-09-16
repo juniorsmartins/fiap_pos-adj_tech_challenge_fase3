@@ -3,7 +3,7 @@ package fiap.adj.fase3.tech_challenge_hospital.infrastructure.controllers;
 import fiap.adj.fase3.tech_challenge_hospital.application.dtos.external.MensagemKafka;
 import fiap.adj.fase3.tech_challenge_hospital.application.dtos.request.FiltroConsulta;
 import fiap.adj.fase3.tech_challenge_hospital.domain.entities.enums.ConsultaStatusEnum;
-import fiap.adj.fase3.tech_challenge_hospital.domain.entities.enums.MotivoKafkaEnum;
+import fiap.adj.fase3.tech_challenge_hospital.domain.entities.enums.MotivoEnum;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.daos.ConsultaDao;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.daos.MedicoDao;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.daos.PacienteDao;
@@ -365,7 +365,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
             assertEquals(request.getDataHora(), mensagem.dataHora().toString());
             assertEquals(medicoDao1.getNome(), mensagem.nomeMedico());
             assertEquals(pacienteDao1.getNome(), mensagem.nomePaciente());
-            assertEquals(MotivoKafkaEnum.AGENDAMENTO.getValue(), mensagem.motivo());
+            assertEquals(MotivoEnum.AGENDAMENTO_CONSULTA.getValue(), mensagem.motivo());
         }
 
         @Test
@@ -386,7 +386,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
             assertEquals(request.getDataHora(), mensagem.dataHora().toString());
             assertEquals(medicoDao2.getNome(), mensagem.nomeMedico());
             assertEquals(pacienteDao2.getNome(), mensagem.nomePaciente());
-            assertEquals(MotivoKafkaEnum.ALTERACAO.getValue(), mensagem.motivo());
+            assertEquals(MotivoEnum.ALTERACAO_CONSULTA.getValue(), mensagem.motivo());
         }
 
         @Test
@@ -403,7 +403,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
             MensagemKafka mensagem = record.value();
             assertEquals(medicoDao2.getNome(), mensagem.nomeMedico());
             assertEquals(pacienteDao1.getNome(), mensagem.nomePaciente());
-            assertEquals(MotivoKafkaEnum.ALTERACAO.getValue(), mensagem.motivo());
+            assertEquals(MotivoEnum.ALTERACAO_CONSULTA.getValue(), mensagem.motivo());
         }
 
         @Test
@@ -420,7 +420,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
             MensagemKafka mensagem = record.value();
             assertEquals(medicoDao2.getNome(), mensagem.nomeMedico());
             assertEquals(pacienteDao1.getNome(), mensagem.nomePaciente());
-            assertEquals(MotivoKafkaEnum.ALTERACAO.getValue(), mensagem.motivo());
+            assertEquals(MotivoEnum.ALTERACAO_CONSULTA.getValue(), mensagem.motivo());
         }
     }
 }
