@@ -107,11 +107,11 @@ type Query {
 
     consultarConsultaPorId(id: ID!): ConsultaResponseDto!
     listarHistoricoDeConsultasPorIdPaciente(id: ID!): [ConsultaResponseDto!]!
-    pesquisarConsulta(filtro: FiltroConsulta): [ConsultaResponseDto!]!
+    pesquisarConsulta(filtro: FiltroConsulta!): [ConsultaResponseDto!]!
 
     consultarHistoricoMedicoPorIdConsulta(id: ID!): HistoricoMedicoResponseDto!
     listarHistoricoMedicoPorIdPaciente(id: ID!): [HistoricoMedicoResponseDto!]!
-    pesquisarHistoricoMedico(filtro: FiltroHistoricoMedico): [HistoricoMedicoResponseDto!]!
+    pesquisarHistoricoMedico(filtro: FiltroHistoricoMedico!): [HistoricoMedicoResponseDto!]!
 }
 
 

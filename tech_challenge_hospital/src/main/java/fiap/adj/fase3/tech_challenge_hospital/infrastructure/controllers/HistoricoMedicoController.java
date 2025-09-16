@@ -59,7 +59,7 @@ public class HistoricoMedicoController {
     }
 
     @QueryMapping
-    public Set<HistoricoMedicoResponseDto> pesquisarHistoricoMedico(@Argument FiltroHistoricoMedico filtro) {
+    public Set<HistoricoMedicoResponseDto> pesquisarHistoricoMedico(@Argument("filtro") FiltroHistoricoMedico filtro) {
         return historicoMedicoOutputPort.pesquisar(filtro.id(), filtro.diagnostico(), filtro.prescricao(), filtro.exames(), filtro.consultaId())
                 .stream()
                 .map(HistoricoMedicoPresenter::converterDtoParaResponse)

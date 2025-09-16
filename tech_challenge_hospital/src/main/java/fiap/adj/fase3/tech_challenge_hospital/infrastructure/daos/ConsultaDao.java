@@ -16,6 +16,7 @@ public final class ConsultaDao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "data_hora")
     private LocalDateTime dataHora;
 
     private String status;

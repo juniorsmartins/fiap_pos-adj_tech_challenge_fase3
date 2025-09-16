@@ -25,7 +25,7 @@ public interface ConsultaRepository extends JpaRepository<ConsultaDao, Long> {
                     "   ON con.paciente = pac.id " +
                     "WHERE 1 = 1 " +
                     "   AND (:id IS NULL OR con.id = :id) " +
-                    "   AND (:dataHora IS NULL OR con.data_hora = :dataHora) " +
+                    "   AND (:dataHora IS NULL OR con.data_hora = CAST(:dataHora AS timestamp)) " +
                     "   AND (:status IS NULL OR con.status = :status) " +
                     "   AND (:medicoId IS NULL OR med.id = :medicoId) " +
                     "   AND (:pacienteId IS NULL OR pac.id = :pacienteId) ",

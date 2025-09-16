@@ -78,7 +78,7 @@ public class ConsultaController {
     }
 
     @QueryMapping
-    public Set<ConsultaResponseDto> pesquisarConsulta(@Argument FiltroConsulta filtro) {
+    public Set<ConsultaResponseDto> pesquisarConsulta(@Argument("filtro") FiltroConsulta filtro) {
         return consultaOutputPort.pesquisar(filtro.id(), filtro.dataHora(), filtro.status(), filtro.medicoId(), filtro.pacienteId())
                 .stream()
                 .map(ConsultaPresenter::converterDtoParaResponse)
