@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsUseCase implements UserDetailsService {
@@ -21,14 +23,28 @@ public class CustomUserDetailsUseCase implements UserDetailsService {
         UserDao userDao = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        var authorities = userDao.getRoles()
-                .stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .toList();
+        var authorities = List.of(new SimpleGrantedAuthority(userDao.getRole().getName()));
 
         return new org.springframework.security.core.userdetails.User(
                 userDao.getUsername(), userDao.getPassword(), userDao.isEnabled(), true,
                 true, true, authorities
         );
     }
+
+//    @Override
+//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//
+//        UserDao userDao = userRepository.findByUsername(username)
+//                .orElseThrow(() -> new UsernameNotFoundException(username));
+//
+//        var authorities = userDao.getRoles()
+//                .stream()
+//                .map(role -> new SimpleGrantedAuthority(role.getName()))
+//                .toList();
+//
+//        return new org.springframework.security.core.userdetails.User(
+//                userDao.getUsername(), userDao.getPassword(), userDao.isEnabled(), true,
+//                true, true, authorities
+//        );
+//    }
 }

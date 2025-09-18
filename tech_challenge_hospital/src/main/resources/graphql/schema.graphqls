@@ -59,7 +59,7 @@ type UserResponseDto {
     username: String
     password: String
     enabled: Boolean
-    roles: [RoleResponseDto]
+    role: RoleResponseDto
 }
 
 type PacienteResponseDto {

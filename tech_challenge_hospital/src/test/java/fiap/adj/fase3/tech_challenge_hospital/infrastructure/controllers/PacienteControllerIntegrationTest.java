@@ -1,5 +1,6 @@
 package fiap.adj.fase3.tech_challenge_hospital.infrastructure.controllers;
 
+import fiap.adj.fase3.tech_challenge_hospital.domain.entities.enums.RoleEnum;
 import fiap.adj.fase3.tech_challenge_hospital.kafka.BaseIntegrationTest;
 import fiap.adj.fase3.tech_challenge_hospital.utils.UtilPacienteTest;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.daos.PacienteDao;
@@ -62,6 +63,7 @@ class PacienteControllerIntegrationTest extends BaseIntegrationTest {
             assertEquals(requestDto.getNome(), response.nome());
             assertEquals(requestDto.getEmail(), response.email());
             assertEquals(requestDto.getUser().getUsername(), response.user().username());
+            assertEquals(RoleEnum.ROLE_PACIENTE.getValue(), response.user().role().name());
         }
 
         @Test
@@ -72,6 +74,7 @@ class PacienteControllerIntegrationTest extends BaseIntegrationTest {
             assertEquals(requestDto.getNome(), dadoSalvo.getNome());
             assertEquals(requestDto.getEmail(), dadoSalvo.getEmail());
             assertEquals(requestDto.getUser().getUsername(), dadoSalvo.getUser().getUsername());
+            assertEquals(RoleEnum.ROLE_PACIENTE.getValue(), dadoSalvo.getUser().getRole().getName());
         }
     }
 
@@ -86,6 +89,7 @@ class PacienteControllerIntegrationTest extends BaseIntegrationTest {
             assertEquals(dao.getNome(), response.nome());
             assertEquals(dao.getEmail(), response.email());
             assertEquals(dao.getUser().getUsername(), response.user().username());
+            assertEquals(RoleEnum.ROLE_PACIENTE.getValue(), response.user().role().name());
         }
     }
 

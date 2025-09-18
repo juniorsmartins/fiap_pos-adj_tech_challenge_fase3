@@ -12,7 +12,7 @@ public class UtilEnfermeiroTest {
     }
 
     public static EnfermeiroDao montarEnfermeiroDao(String nome, String username, String password) {
-        var userDao = UtilUserTest.montarUserDao(username, password, 3L, RoleEnum.ROLE_MEDICO.getValue());
+        var userDao = UtilUserTest.montarUserDao(username, password, 4L, RoleEnum.ROLE_ENFERMEIRO.getValue());
         var enfermeiroDao = new EnfermeiroDao();
         enfermeiroDao.setNome(nome);
         enfermeiroDao.setUser(userDao);

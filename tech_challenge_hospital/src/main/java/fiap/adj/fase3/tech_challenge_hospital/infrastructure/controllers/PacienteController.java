@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 
 import java.util.Optional;
@@ -24,6 +25,7 @@ public class PacienteController {
 
     private final RoleOutputPort roleOutputPort;
 
+    @Secured({"ROLE_ADMIN"})
     @MutationMapping(value = "criarPaciente")
     public PacienteResponseDto criarPaciente(@Argument PacienteRequestDto request) {
         return Optional.ofNullable(request)
@@ -32,6 +34,7 @@ public class PacienteController {
                 .orElseThrow();
     }
 
+    @Secured({"ROLE_ADMIN"})
     @QueryMapping(value = "consultarPacientePorId")
     public PacienteResponseDto consultarPacientePorId(@Argument Long id) {
         return pacienteOutputPort.consultarPorId(id)
@@ -39,12 +42,14 @@ public class PacienteController {
                 .orElseThrow();
     }
 
+    @Secured({"ROLE_ADMIN"})
     @MutationMapping
     public Boolean apagarPaciente(@Argument Long id) {
         pacienteInputPort.apagarPorId(id, pacienteOutputPort);
         return true;
     }
 
+    @Secured({"ROLE_ADMIN"})
     @MutationMapping
     public PacienteResponseDto atualizarPaciente(@Argument Long id, @Argument PacienteRequestDto request) {
         return Optional.ofNullable(request)

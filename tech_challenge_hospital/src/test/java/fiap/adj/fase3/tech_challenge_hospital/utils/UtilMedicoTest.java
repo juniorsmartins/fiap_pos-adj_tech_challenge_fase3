@@ -12,7 +12,7 @@ public class UtilMedicoTest {
     }
 
     public static MedicoDao montarMedicoDao(String nome, String username, String password) {
-        var userDao = UtilUserTest.montarUserDao(username, password, 3L, RoleEnum.ROLE_MEDICO.getValue());
+        var userDao = UtilUserTest.montarUserDao(username, password, 2L, RoleEnum.ROLE_MEDICO.getValue());
         var medicoDao = new MedicoDao();
         medicoDao.setNome(nome);
         medicoDao.setUser(userDao);

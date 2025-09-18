@@ -12,7 +12,7 @@ public class UtilPacienteTest {
     }
 
     public static PacienteDao montarPacienteDao(String nome, String email, String username, String password) {
-        var userDao = UtilUserTest.montarUserDao(username, password, 4L, RoleEnum.ROLE_PACIENTE.getValue());
+        var userDao = UtilUserTest.montarUserDao(username, password, 3L, RoleEnum.ROLE_PACIENTE.getValue());
         return new PacienteDao(nome, email, userDao);
     }
 }

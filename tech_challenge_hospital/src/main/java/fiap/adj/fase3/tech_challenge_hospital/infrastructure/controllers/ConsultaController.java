@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
 import java.util.Comparator;
@@ -32,6 +35,7 @@ public class ConsultaController {
 
     private final PacienteOutputPort pacienteOutputPort;
 
+    @Secured({"ROLE_ENFERMEIRO"})
     @MutationMapping
     public ConsultaResponseDto criarConsulta(@Argument ConsultaRequestDto request) {
         return Optional.ofNullable(request)
@@ -40,6 +44,7 @@ public class ConsultaController {
                 .orElseThrow();
     }
 
+    @Secured({"ROLE_MEDICO"})
     @MutationMapping
     public ConsultaResponseDto atualizarConsulta(@Argument Long id, @Argument ConsultaRequestDto request) {
         return Optional.ofNullable(request)
@@ -48,6 +53,7 @@ public class ConsultaController {
                 .orElseThrow();
     }
 
+    @PostAuthorize("hasAnyRole('MEDICO', 'ENFERMEIRO') or (hasRole('PACIENTE') and returnObject.paciente.id == authentication.principal.id)")
     @QueryMapping
     public ConsultaResponseDto consultarConsultaPorId(@Argument Long id) {
         return Optional.ofNullable(id)
@@ -56,18 +62,21 @@ public class ConsultaController {
                 .orElseThrow();
     }
 
+    @Secured({"ROLE_MEDICO"})
     @MutationMapping
     public Boolean concluirConsulta(@Argument Long id) {
         consultaInputPort.concluir(id, consultaOutputPort);
         return true;
     }
 
+    @Secured({"ROLE_MEDICO", "ROLE_ENFERMEIRO"})
     @MutationMapping
     public Boolean cancelarConsulta(@Argument Long id) {
         consultaInputPort.cancelar(id, consultaOutputPort);
         return true;
     }
 
+    @PreAuthorize("hasAnyRole('MEDICO', 'ENFERMEIRO') or (#id == authentication.principal.id)")
     @QueryMapping
     public Set<ConsultaResponseDto> listarHistoricoDeConsultasPorIdPaciente(@Argument Long id) {
         return consultaOutputPort.buscarHistoricoDeConsultasPorId(id)
@@ -77,6 +86,7 @@ public class ConsultaController {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
+    @Secured({"ROLE_MEDICO", "ROLE_ENFERMEIRO"})
     @QueryMapping
     public Set<ConsultaResponseDto> pesquisarConsulta(@Argument("filtro") FiltroConsulta filtro) {
         return consultaOutputPort.pesquisar(filtro.id(), filtro.dataHora(), filtro.status(), filtro.medicoId(), filtro.pacienteId())

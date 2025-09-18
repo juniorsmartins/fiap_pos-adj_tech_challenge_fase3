@@ -1,5 +1,6 @@
 package fiap.adj.fase3.tech_challenge_hospital.infrastructure.controllers;
 
+import fiap.adj.fase3.tech_challenge_hospital.domain.entities.enums.RoleEnum;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.daos.EnfermeiroDao;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.repositories.EnfermeiroRepository;
 import fiap.adj.fase3.tech_challenge_hospital.kafka.BaseIntegrationTest;
@@ -38,12 +39,12 @@ class EnfermeiroControllerIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private EnfermeiroRepository repository;
 
-    private EnfermeiroDao dao;
+    private EnfermeiroDao enfermeiroDao;
 
     @BeforeEach
     void setUp() {
-        dao = UtilEnfermeiroTest.montarEnfermeiroDao(NOME_INICIAL, USERNAME, PASSWORD);
-        repository.save(dao);
+        enfermeiroDao = UtilEnfermeiroTest.montarEnfermeiroDao(NOME_INICIAL, USERNAME, PASSWORD);
+        repository.save(enfermeiroDao);
     }
 
     @Nested
@@ -60,6 +61,7 @@ class EnfermeiroControllerIntegrationTest extends BaseIntegrationTest {
             assertNotNull(response.id());
             assertEquals(requestDto.getNome(), response.nome());
             assertEquals(requestDto.getUser().getUsername(), response.user().username());
+            assertEquals(RoleEnum.ROLE_ENFERMEIRO.getValue(), response.user().role().name());
         }
 
         @Test
@@ -69,6 +71,7 @@ class EnfermeiroControllerIntegrationTest extends BaseIntegrationTest {
             var dadoSalvo = repository.findById(response.id()).orElseThrow();
             assertEquals(requestDto.getNome(), dadoSalvo.getNome());
             assertEquals(requestDto.getUser().getUsername(), dadoSalvo.getUser().getUsername());
+            assertEquals(RoleEnum.ROLE_ENFERMEIRO.getValue(), dadoSalvo.getUser().getRole().getName());
         }
     }
 
@@ -78,10 +81,11 @@ class EnfermeiroControllerIntegrationTest extends BaseIntegrationTest {
 
         @Test
         void dadoIdValido_quandoConsultarPorId_entaoRetornarResponseValido() {
-            var response = controller.consultarEnfermeiroPorId(dao.getId());
-            assertEquals(dao.getId(), response.id());
-            assertEquals(dao.getNome(), response.nome());
-            assertEquals(dao.getUser().getUsername(), response.user().username());
+            var response = controller.consultarEnfermeiroPorId(enfermeiroDao.getId());
+            assertEquals(enfermeiroDao.getId(), response.id());
+            assertEquals(enfermeiroDao.getNome(), response.nome());
+            assertEquals(enfermeiroDao.getUser().getUsername(), response.user().username());
+            assertEquals(RoleEnum.ROLE_ENFERMEIRO.getValue(), response.user().role().name());
         }
     }
 
@@ -91,13 +95,13 @@ class EnfermeiroControllerIntegrationTest extends BaseIntegrationTest {
 
         @Test
         void dadoIdValido_quandoApagarPorId_entaoRetornarTrue() {
-            var response = controller.apagarEnfermeiro(dao.getId());
+            var response = controller.apagarEnfermeiro(enfermeiroDao.getId());
             assertTrue(response);
         }
 
         @Test
         void dadoIdValido_quandoApagarPorId_entaoDeletarDoBanco() {
-            var id = dao.getId();
+            var id = enfermeiroDao.getId();
             var dao = repository.findById(id);
             assertFalse(dao.isEmpty());
 
@@ -115,14 +119,14 @@ class EnfermeiroControllerIntegrationTest extends BaseIntegrationTest {
 
         @Test
         void dadoRequisicaoValida_quandoAtualizar_entaoRetornarResponseValido() {
-            var desatualizado = repository.findById(dao.getId());
+            var desatualizado = repository.findById(enfermeiroDao.getId());
             assertFalse(desatualizado.isEmpty());
             assertEquals(NOME_INICIAL, desatualizado.get().getNome());
             assertEquals(USERNAME, desatualizado.get().getUser().getUsername());
             assertEquals(PASSWORD, desatualizado.get().getUser().getPassword());
 
             var atualizado = UtilEnfermeiroTest.montarEnfermeiroRequestDto(NOME_ATUAL, USERNAME_ATUAL, PASSWORD_ATUAL);
-            var response = controller.atualizarEnfermeiro(dao.getId(), atualizado);
+            var response = controller.atualizarEnfermeiro(enfermeiroDao.getId(), atualizado);
 
             assertEquals(atualizado.getNome(), response.nome());
             assertEquals(atualizado.getUser().getUsername(), response.user().username());
@@ -134,7 +138,7 @@ class EnfermeiroControllerIntegrationTest extends BaseIntegrationTest {
 
         @Test
         void dadoRequisicaoValida_quandoAtualizar_entaoAtualizarNoBanco() {
-            var id = dao.getId();
+            var id = enfermeiroDao.getId();
             var atualizado = UtilEnfermeiroTest.montarEnfermeiroRequestDto(NOME_ATUAL, USERNAME_ATUAL, PASSWORD_ATUAL);
             var response = controller.atualizarEnfermeiro(id, atualizado);
 

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 
 import java.util.Optional;
@@ -27,6 +28,7 @@ public class HistoricoMedicoController {
 
     private final ConsultaOutputPort consultaOutputPort;
 
+    @Secured({"ROLE_MEDICO"})
     @MutationMapping
     public HistoricoMedicoResponseDto criarHistoricoMedico(@Argument HistoricoMedicoRequestDto request) {
         return Optional.ofNullable(request)
@@ -35,6 +37,7 @@ public class HistoricoMedicoController {
                 .orElseThrow();
     }
 
+    @Secured({"ROLE_MEDICO"})
     @MutationMapping
     public HistoricoMedicoResponseDto atualizarHistoricoMedico(@Argument HistoricoMedicoRequestDto request) {
         return Optional.ofNullable(request)
@@ -43,6 +46,7 @@ public class HistoricoMedicoController {
                 .orElseThrow();
     }
 
+    @Secured({"ROLE_MEDICO", "ROLE_ENFERMEIRO"})
     @QueryMapping
     public HistoricoMedicoResponseDto consultarHistoricoMedicoPorIdConsulta(@Argument Long id) {
         return historicoMedicoOutputPort.consultarHistoricoMedicoPorIdConsulta(id)
@@ -50,6 +54,7 @@ public class HistoricoMedicoController {
                 .orElseThrow();
     }
 
+    @Secured({"ROLE_MEDICO", "ROLE_ENFERMEIRO"})
     @QueryMapping
     public Set<HistoricoMedicoResponseDto> listarHistoricoMedicoPorIdPaciente(@Argument Long id) {
         return historicoMedicoOutputPort.listarHistoricoMedicoPorIdPaciente(id)
@@ -58,6 +63,7 @@ public class HistoricoMedicoController {
                 .collect(Collectors.toSet());
     }
 
+    @Secured({"ROLE_MEDICO", "ROLE_ENFERMEIRO"})
     @QueryMapping
     public Set<HistoricoMedicoResponseDto> pesquisarHistoricoMedico(@Argument("filtro") FiltroHistoricoMedico filtro) {
         return historicoMedicoOutputPort.pesquisar(filtro.id(), filtro.diagnostico(), filtro.prescricao(), filtro.exames(), filtro.consultaId())
