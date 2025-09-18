@@ -53,13 +53,13 @@ public class ConsultaController {
                 .orElseThrow();
     }
 
-    @PostAuthorize("hasAnyRole('MEDICO', 'ENFERMEIRO') or (hasRole('PACIENTE') and returnObject.paciente.id == authentication.principal.id)")
+    @PostAuthorize("hasAnyRole('MEDICO', 'ENFERMEIRO') or (hasRole('PACIENTE') and returnObject != null and returnObject.paciente != null and returnObject.paciente.user.username == authentication.name)")
     @QueryMapping
     public ConsultaResponseDto consultarConsultaPorId(@Argument Long id) {
         return Optional.ofNullable(id)
                 .map(codigo -> consultaInputPort.consultarPorId(codigo, consultaOutputPort))
                 .map(ConsultaPresenter::converterDtoParaResponse)
-                .orElseThrow();
+                .orElse(null);
     }
 
     @Secured({"ROLE_MEDICO"})
