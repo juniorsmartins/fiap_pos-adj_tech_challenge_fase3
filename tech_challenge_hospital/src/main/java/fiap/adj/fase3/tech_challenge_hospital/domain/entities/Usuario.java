@@ -7,9 +7,6 @@ import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.RoleOu
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-
 @Getter
 @Setter
 public final class Usuario {
@@ -22,21 +19,21 @@ public final class Usuario {
 
     private boolean enabled;
 
-    private Set<Role> roles;
+    private Role role;
 
-    public Usuario(Long id, String username, String password, boolean enabled, Set<Role> roles) {
+    public Usuario(Long id, String username, String password, boolean enabled, Role role) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.enabled = enabled;
-        this.roles = roles;
+        this.role = role;
     }
 
-    public Usuario(String username, String password, boolean enabled, Set<Role> roles) {
+    public Usuario(String username, String password, boolean enabled, Role role) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
-        this.roles = roles;
+        this.role = role;
     }
 
     public Usuario(String username, String password) {
@@ -46,22 +43,16 @@ public final class Usuario {
 
     public static Usuario criarUsuarioEntity(UserRequestDto dto, RoleEnum roleEnum, RoleOutputPort roleOutputPort) {
         var role = Role.consultarRolePorNome(roleEnum.getValue(), roleOutputPort);
-        return new Usuario(dto.getUsername(), dto.getPassword(), true, Set.of(role));
+        return new Usuario(dto.getUsername(), dto.getPassword(), true, role);
     }
 
     public static UserDto converterEntityParaDto(Usuario usuario) {
-        var roleDto = usuario.getRoles().stream()
-                .map(Role::converterEntityParaDto)
-                .collect(Collectors.toSet());
-
+        var roleDto = Role.converterEntityParaDto(usuario.getRole());
         return new UserDto(usuario.getId(), usuario.getUsername(), usuario.getPassword(), usuario.isEnabled(), roleDto);
     }
 
     public static Usuario converterDtoParaEntity(UserDto dto) {
-        var role = dto.roles().stream()
-                .map(Role::converterDtoParaEntity)
-                .collect(Collectors.toSet());
-
+        var role = Role.converterDtoParaEntity(dto.role());
         return new Usuario(dto.id(), dto.username(), dto.password(), dto.enabled(), role);
     }
 }

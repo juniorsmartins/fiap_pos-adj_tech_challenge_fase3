@@ -8,9 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @AllArgsConstructor
 @Getter
 @Setter
@@ -50,12 +47,8 @@ public final class Medico {
         usuario.setId(dto.user().id());
         usuario.setEnabled(dto.user().enabled());
 
-        Set<Role> roles = new HashSet<>();
-        dto.user().roles()
-                .forEach(roleDto -> {
-                    roles.add(new Role(roleDto.id(), roleDto.name()));
-                });
-        usuario.setRoles(roles);
+        var role = Role.converterDtoParaEntity(dto.user().role());
+        usuario.setRole(role);
 
         return new Medico(dto.id(), request.getNome(), usuario);
     }

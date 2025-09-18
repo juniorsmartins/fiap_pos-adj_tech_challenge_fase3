@@ -3,9 +3,6 @@ package fiap.adj.fase3.tech_challenge_hospital.utils;
 import fiap.adj.fase3.tech_challenge_hospital.application.dtos.request.UserRequestDto;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.daos.UserDao;
 
-import java.util.Collections;
-import java.util.HashSet;
-
 public class UtilUserTest {
 
     public static UserRequestDto montarUserRequestDto(String username, String password) {
