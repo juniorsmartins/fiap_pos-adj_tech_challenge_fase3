@@ -10,7 +10,7 @@ import fiap.adj.fase3.tech_challenge_hospital.infrastructure.daos.PacienteDao;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.repositories.ConsultaRepository;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.repositories.MedicoRepository;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.repositories.PacienteRepository;
-import fiap.adj.fase3.tech_challenge_hospital.kafka.KafkaBaseIntegrationTest;
+import fiap.adj.fase3.tech_challenge_hospital.kafka.BaseIntegrationTest;
 import fiap.adj.fase3.tech_challenge_hospital.utils.UtilConsultaTest;
 import fiap.adj.fase3.tech_challenge_hospital.utils.UtilMedicoTest;
 import fiap.adj.fase3.tech_challenge_hospital.utils.UtilPacienteTest;
@@ -24,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
@@ -38,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
+class ConsultaControllerIntegrationTest extends BaseIntegrationTest {
 
     public static final String DATA_HORA_INICIAL = "2025-07-12T10:10:22";
 
@@ -90,9 +91,6 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
         var dataHora2 = LocalDateTime.of(LocalDate.of(2025, 9, 5), LocalTime.of(16, 12));
         consultaDao2 = UtilConsultaTest.montarConsultaDao(dataHora2, ConsultaStatusEnum.AGENDADO.getValue(), medicoDao2, pacienteDao1);
         repository.save(consultaDao2);
-
-        // KAFKA
-
     }
 
     @Nested
@@ -100,6 +98,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
     class Criar {
 
         @Test
+        @WithMockUser(roles = "ENFERMEIRO")
         void dadaRequisicaoValida_quandoCriar_entaoRetornarResponseComDadosValidos() {
             var request = UtilConsultaTest.montarConsultaRequestDto(DATA_HORA_INICIAL, medicoDao1.getId(), pacienteDao1.getId());
             var response = controller.criarConsulta(request);
@@ -111,6 +110,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
         }
 
         @Test
+        @WithMockUser(roles = "ENFERMEIRO")
         void dadaRequisicaoValida_quandoCriar_entaoSalvarDadosValidosNoBanco() {
             var request = UtilConsultaTest.montarConsultaRequestDto(DATA_HORA_INICIAL, medicoDao1.getId(), pacienteDao1.getId());
             var response = controller.criarConsulta(request);
@@ -127,6 +127,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
     class Atualizar {
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadaRequisicaoValida_quandoAtualizar_entaoRetornarResponseValido() {
             var id = consultaDao1.getId();
             var desatualizado = repository.findById(id).orElseThrow();
@@ -144,6 +145,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
         }
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadaRequisicaoValida_quandoAtualizar_entaoAtualizarNoBanco() {
             var id = consultaDao1.getId();
             var atualizado = UtilConsultaTest
@@ -164,6 +166,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
     class Consultar {
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoIdValido_quandoConsultarPorId_entaoRetornarResponseValido() {
             var response = controller.consultarConsultaPorId(consultaDao1.getId());
             assertEquals(consultaDao1.getId(), response.id());
@@ -178,12 +181,14 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
     class Concluir {
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoIdValido_quandoConcluirConsulta_entaoRetornarTrue() {
             var response = controller.concluirConsulta(consultaDao1.getId());
             assertTrue(response);
         }
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoIdValido_quandoConcluirConsulta_entaoSalvarConsultaComStatusConcluido() {
             var dadoAnterior = repository.findById(consultaDao1.getId()).orElseThrow();
             assertEquals(ConsultaStatusEnum.AGENDADO.getValue(), dadoAnterior.getStatus());
@@ -201,12 +206,14 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
     class Cancelar {
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoIdValido_quandoCancelarConsulta_entaoRetornarTrue() {
             var response = controller.cancelarConsulta(consultaDao1.getId());
             assertTrue(response);
         }
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoIdValido_quandoCancelarConsulta_entaoSalvarConsultaComStatusCancelado() {
             var dadoAnterior = repository.findById(consultaDao1.getId()).orElseThrow();
             assertEquals(ConsultaStatusEnum.AGENDADO.getValue(), dadoAnterior.getStatus());
@@ -224,6 +231,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
     class Listar {
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoIdValido_quandoListarHistoricoDeConsultasPorIdPaciente_entaoRetornarListaValida() {
             var colecao = controller.listarHistoricoDeConsultasPorIdPaciente(pacienteDao1.getId());
             assertEquals(2, colecao.size());
@@ -235,6 +243,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
     class Pesquisar {
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoFiltroValido_quandoPesquisarPorId_entaoRetornarSetComUmConsultaResponseDto() {
             var idConsulta = consultaDao1.getId();
             var filtro = new FiltroConsulta(idConsulta, null, null, null, null);
@@ -250,6 +259,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
         }
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoFiltroValido_quandoPesquisarPorDataHora_entaoRetornarSetComUmConsultaResponseDto() {
             var dataHora1 = LocalDateTime
                     .of(LocalDate.of(2025, 8, 10), LocalTime.of(14, 10)).toString();
@@ -266,6 +276,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
         }
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoFiltroValido_quandoPesquisarPorStatusAgendado_entaoRetornarSetComDoisConsultaResponseDto() {
             var status = ConsultaStatusEnum.AGENDADO.getValue();
             var filtro = new FiltroConsulta(null, null, status, null, null);
@@ -275,6 +286,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
         }
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoFiltroValido_quandoPesquisarPorMedicoId_entaoRetornarSetComUmConsultaResponseDto() {
             var idMedico2 = consultaDao2.getMedico().getId();
             var filtro = new FiltroConsulta(null, null, null, idMedico2, null);
@@ -290,6 +302,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
         }
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoFiltroValido_quandoPesquisarPorPacienteId_entaoRetornarSetComDoisConsultaResponseDto() {
             var idPaciente1 = consultaDao2.getPaciente().getId();
             var filtro = new FiltroConsulta(null, null, null, null, idPaciente1);
@@ -299,6 +312,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
         }
 
         @Test
+        @WithMockUser(roles = "ENFERMEIRO")
         void dadoFiltrosValidosMasComValorInexistente_quandoPesquisarPorStatusAndPacienteId_entaoRetornarSetVazio() {
             var status = ConsultaStatusEnum.CONCLUIDO.getValue();
             var idPaciente1 = consultaDao2.getPaciente().getId();
@@ -348,6 +362,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
         }
 
         @Test
+        @WithMockUser(roles = "ENFERMEIRO")
         void dadaRequisicaoValida_quandoCriar_entaoEnviarMensagemKafkaCorreta() throws InterruptedException {
             // Arrange
             var request = UtilConsultaTest
@@ -369,6 +384,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
         }
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadaRequisicaoValida_quandoAtualizar_entaoEnviarMensagemKafkaCorreta() throws InterruptedException {
             // Arrange
             var request = UtilConsultaTest
@@ -390,6 +406,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
         }
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadaRequisicaoValida_quandoConcluir_entaoEnviarMensagemKafkaCorreta() throws InterruptedException {
             // Act
             var response = controller.concluirConsulta(consultaDao2.getId());
@@ -407,6 +424,7 @@ class ConsultaControllerIntegrationTest extends KafkaBaseIntegrationTest {
         }
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadaRequisicaoValida_quandoCancelar_entaoEnviarMensagemKafkaCorreta() throws InterruptedException {
             // Act
             var response = controller.cancelarConsulta(consultaDao2.getId());

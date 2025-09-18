@@ -1,22 +1,24 @@
 package fiap.adj.fase3.tech_challenge_hospital.infrastructure.controllers;
 
-import fiap.adj.fase3.tech_challenge_hospital.kafka.KafkaBaseIntegrationTest;
-import fiap.adj.fase3.tech_challenge_hospital.utils.UtilEnfermeiroTest;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.daos.EnfermeiroDao;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.repositories.EnfermeiroRepository;
+import fiap.adj.fase3.tech_challenge_hospital.kafka.BaseIntegrationTest;
+import fiap.adj.fase3.tech_challenge_hospital.utils.UtilEnfermeiroTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class EnfermeiroControllerIntegrationTest extends KafkaBaseIntegrationTest {
+@WithMockUser(username = "admin", roles = {"ADMIN"})
+class EnfermeiroControllerIntegrationTest extends BaseIntegrationTest {
 
     private static final String NOME_INICIAL = "Enfermeiro Inicial";
 

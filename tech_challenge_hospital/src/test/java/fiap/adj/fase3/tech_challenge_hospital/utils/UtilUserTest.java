@@ -19,7 +19,7 @@ public class UtilUserTest {
         userDao.setEnabled(true);
 
         var roleDao = UtilRoleTest.montarRoleDao(idRole, role);
-        userDao.setRoles(new HashSet<>(Collections.singleton(roleDao)));
+        userDao.setRole(roleDao);
 
         return userDao;
     }

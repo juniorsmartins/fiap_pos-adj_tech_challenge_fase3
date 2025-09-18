@@ -1,6 +1,6 @@
 package fiap.adj.fase3.tech_challenge_hospital.infrastructure.controllers;
 
-import fiap.adj.fase3.tech_challenge_hospital.kafka.KafkaBaseIntegrationTest;
+import fiap.adj.fase3.tech_challenge_hospital.kafka.BaseIntegrationTest;
 import fiap.adj.fase3.tech_challenge_hospital.utils.UtilConsultaTest;
 import fiap.adj.fase3.tech_challenge_hospital.utils.UtilHistoricoMedicoTest;
 import fiap.adj.fase3.tech_challenge_hospital.utils.UtilMedicoTest;
@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -30,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @Transactional
-class HistoricoMedicoControllerIntegrationTest extends KafkaBaseIntegrationTest {
+class HistoricoMedicoControllerIntegrationTest extends BaseIntegrationTest {
 
     private static final String DIAGNOSTICO = "Diagnostico Inicial";
 
@@ -87,6 +88,7 @@ class HistoricoMedicoControllerIntegrationTest extends KafkaBaseIntegrationTest 
     class Criar {
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadaRequisicaoValida_quandoCriarHistoricoMedico_entaoRetornarResponseValido() {
             var request = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO, PRESCRICAO, EXAMES, consultaDao1.getId());
             var response = controller.criarHistoricoMedico(request);
@@ -97,6 +99,7 @@ class HistoricoMedicoControllerIntegrationTest extends KafkaBaseIntegrationTest 
         }
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadaRequisicaoValida_quandoCriarHistoricoMedico_entaoSalvarNoBanco() {
             var request = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO, PRESCRICAO, EXAMES, consultaDao1.getId());
             var response = controller.criarHistoricoMedico(request);
@@ -113,6 +116,7 @@ class HistoricoMedicoControllerIntegrationTest extends KafkaBaseIntegrationTest 
     class Atualizar {
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoIdValidoAndRequisicaoValida_quandoAtualizar_entaoRetornarResponseValido() {
             var idConsulta = consultaDao1.getId();
             var request = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO, PRESCRICAO, EXAMES, idConsulta);
@@ -131,6 +135,7 @@ class HistoricoMedicoControllerIntegrationTest extends KafkaBaseIntegrationTest 
         }
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoIdValidoAndRequisicaoValida_quandoAtualizar_entaoSalvarNoBanco() {
             var idConsulta = consultaDao1.getId();
             var request = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO, PRESCRICAO, EXAMES, idConsulta);
@@ -153,6 +158,7 @@ class HistoricoMedicoControllerIntegrationTest extends KafkaBaseIntegrationTest 
     class Listar {
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoIdValido_quandoListarHistoricoPorIdPaciente_entaoRetornarDoisItens() {
             var request1 = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO, PRESCRICAO, EXAMES, consultaDao1.getId());
             controller.criarHistoricoMedico(request1);
@@ -170,6 +176,7 @@ class HistoricoMedicoControllerIntegrationTest extends KafkaBaseIntegrationTest 
     class Consultar {
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoIdValido_quandoConsultarHistoricoMedicoPorIdConsulta() {
             var idConsulta = consultaDao1.getId();
             var request1 = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO, PRESCRICAO, EXAMES, idConsulta);
@@ -186,6 +193,7 @@ class HistoricoMedicoControllerIntegrationTest extends KafkaBaseIntegrationTest 
     class Pesquisar {
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoFiltroValido_quandoPesquisarPorId_entaoRetornarSetComUmHistoricoMedico() {
             var idConsulta1 = consultaDao1.getId();
             var request1 = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO, PRESCRICAO, EXAMES, idConsulta1);
@@ -209,6 +217,7 @@ class HistoricoMedicoControllerIntegrationTest extends KafkaBaseIntegrationTest 
         }
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoFiltroValido_quandoPesquisarPorDiagnostico_entaoRetornarSetComUmHistoricoMedico() {
             var idConsulta1 = consultaDao1.getId();
             var request1 = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO, PRESCRICAO, EXAMES, idConsulta1);
@@ -232,6 +241,7 @@ class HistoricoMedicoControllerIntegrationTest extends KafkaBaseIntegrationTest 
         }
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoFiltroValido_quandoPesquisarPorPrescricao_entaoRetornarSetComUmHistoricoMedico() {
             var idConsulta1 = consultaDao1.getId();
             var request1 = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO, PRESCRICAO, EXAMES, idConsulta1);
@@ -255,6 +265,7 @@ class HistoricoMedicoControllerIntegrationTest extends KafkaBaseIntegrationTest 
         }
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoFiltroValido_quandoPesquisarPorExames_entaoRetornarSetComUmHistoricoMedico() {
             var idConsulta1 = consultaDao1.getId();
             var request1 = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO, PRESCRICAO, EXAMES, idConsulta1);
@@ -278,6 +289,7 @@ class HistoricoMedicoControllerIntegrationTest extends KafkaBaseIntegrationTest 
         }
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoFiltroValido_quandoPesquisarPorConsultaId_entaoRetornarSetComUmHistoricoMedico() {
             var idConsulta1 = consultaDao1.getId();
             var request1 = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO, PRESCRICAO, EXAMES, idConsulta1);
@@ -300,6 +312,7 @@ class HistoricoMedicoControllerIntegrationTest extends KafkaBaseIntegrationTest 
         }
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoFiltroValido_quandoPesquisarPorDiagnosticoAndConsultaID_entaoRetornarSetComUmHistoricoMedico() {
             var idConsulta1 = consultaDao1.getId();
             var request1 = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO, PRESCRICAO, EXAMES, idConsulta1);
@@ -323,6 +336,7 @@ class HistoricoMedicoControllerIntegrationTest extends KafkaBaseIntegrationTest 
         }
 
         @Test
+        @WithMockUser(roles = "MEDICO")
         void dadoFiltroValidoMasComValorInexistente_quandoPesquisarPorDiagnosticoAndConsultaID_entaoRetornarSetVazio() {
             var idConsulta1 = consultaDao1.getId();
             var request1 = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO, PRESCRICAO, EXAMES, idConsulta1);

@@ -18,14 +18,10 @@ spring:
     defer-datasource-initialization: true
     show-sql: true
 
-#  sql: # Habilita ou desabilita acionamento de script SQL
-#    init:
-#      mode: never
-#      data-locations: []
-  sql: # Esta propriedade controla quando e como o Spring Boot inicializa o banco de dados com scripts SQL
+  sql: # Habilita ou desabilita acionamento de script SQL
     init:
-      mode: always
-      data-locations: classpath:db/data.sql
+      mode: never
+      data-locations: []
 
   # Habilitar o console do H2 (opcional)
   h2:
@@ -44,9 +40,11 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        spring.json.trusted.packages: "fiap.adj.fase3" # Pacote confiável para desserialização - Asterisco para confiar em todos
+        spring.json.trusted.packages: "*" # Asterisco para confiar em todos os pacotes para desserializacao
+        spring.json.add.type.headers: false # Opcional: Evita headers de tipo para simplicidade
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer  # Para JSON
       properties:
-        spring.json.add.type.headers: false  # Opcional: Evita headers de tipo para simplicidade
+        spring.json.trusted.packages: "*" # Asterisco para confiar em todos os pacotes para desserializacao
+        spring.json.add.type.headers: false # Opcional: Evita headers de tipo para simplicidade

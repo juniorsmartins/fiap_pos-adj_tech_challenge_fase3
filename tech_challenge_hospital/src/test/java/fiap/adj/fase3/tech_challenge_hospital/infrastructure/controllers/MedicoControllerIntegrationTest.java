@@ -1,6 +1,6 @@
 package fiap.adj.fase3.tech_challenge_hospital.infrastructure.controllers;
 
-import fiap.adj.fase3.tech_challenge_hospital.kafka.KafkaBaseIntegrationTest;
+import fiap.adj.fase3.tech_challenge_hospital.kafka.BaseIntegrationTest;
 import fiap.adj.fase3.tech_challenge_hospital.utils.UtilMedicoTest;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.daos.MedicoDao;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.repositories.MedicoRepository;
@@ -10,13 +10,15 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class MedicoControllerIntegrationTest extends KafkaBaseIntegrationTest {
+@WithMockUser(username = "admin", roles = {"ADMIN"})
+class MedicoControllerIntegrationTest extends BaseIntegrationTest {
 
     private static final String NOME_INICIAL = "Médico Inicial";
 
