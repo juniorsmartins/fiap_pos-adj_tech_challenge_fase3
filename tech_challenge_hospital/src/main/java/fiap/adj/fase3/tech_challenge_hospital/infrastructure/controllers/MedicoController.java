@@ -34,14 +34,6 @@ public class MedicoController {
                 .orElseThrow();
     }
 
-    @Secured({"ROLE_ADMIN", "ROLE_MEDICO", "ROLE_ENFERMEIRO", "ROLE_PACIENTE"})
-    @QueryMapping
-    public MedicoResponseDto consultarMedicoPorId(@Argument Long id) {
-        return medicoOutputPort.consultarPorId(id)
-                .map(MedicoPresenter::converterDtoParaResponse)
-                .orElseThrow();
-    }
-
     @Secured({"ROLE_ADMIN"})
     @MutationMapping
     public Boolean apagarMedico(@Argument Long id) {
@@ -54,6 +46,14 @@ public class MedicoController {
     public MedicoResponseDto atualizarMedico(@Argument Long id, @Argument MedicoRequestDto request) {
         return Optional.ofNullable(request)
                 .map(dto -> medicoInputPort.atualizar(id, dto, medicoOutputPort))
+                .map(MedicoPresenter::converterDtoParaResponse)
+                .orElseThrow();
+    }
+
+    @Secured({"ROLE_ADMIN", "ROLE_MEDICO", "ROLE_ENFERMEIRO", "ROLE_PACIENTE"})
+    @QueryMapping
+    public MedicoResponseDto consultarMedicoPorId(@Argument Long id) {
+        return medicoOutputPort.consultarPorId(id)
                 .map(MedicoPresenter::converterDtoParaResponse)
                 .orElseThrow();
     }

@@ -34,14 +34,6 @@ public class EnfermeiroController {
                 .orElseThrow();
     }
 
-    @Secured({"ROLE_ADMIN", "ROLE_MEDICO", "ROLE_ENFERMEIRO", "ROLE_PACIENTE"})
-    @QueryMapping
-    public EnfermeiroResponseDto consultarEnfermeiroPorId(@Argument Long id) {
-        return enfermeiroOutputPort.consultarPorId(id)
-                .map(EnfermeiroPresenter::converterDtoParaResponse)
-                .orElseThrow();
-    }
-
     @Secured({"ROLE_ADMIN"})
     @MutationMapping
     public Boolean apagarEnfermeiro(@Argument Long id) {
@@ -54,6 +46,14 @@ public class EnfermeiroController {
     public EnfermeiroResponseDto atualizarEnfermeiro(@Argument Long id, @Argument EnfermeiroRequestDto request) {
         return Optional.ofNullable(request)
                 .map(dto -> enfermeiroInputPort.atualizar(id, dto, enfermeiroOutputPort))
+                .map(EnfermeiroPresenter::converterDtoParaResponse)
+                .orElseThrow();
+    }
+
+    @Secured({"ROLE_ADMIN", "ROLE_MEDICO", "ROLE_ENFERMEIRO", "ROLE_PACIENTE"})
+    @QueryMapping
+    public EnfermeiroResponseDto consultarEnfermeiroPorId(@Argument Long id) {
+        return enfermeiroOutputPort.consultarPorId(id)
                 .map(EnfermeiroPresenter::converterDtoParaResponse)
                 .orElseThrow();
     }

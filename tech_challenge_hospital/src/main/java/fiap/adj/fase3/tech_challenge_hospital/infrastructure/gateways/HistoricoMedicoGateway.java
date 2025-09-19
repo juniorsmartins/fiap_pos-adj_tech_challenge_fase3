@@ -1,8 +1,7 @@
 package fiap.adj.fase3.tech_challenge_hospital.infrastructure.gateways;
 
 import fiap.adj.fase3.tech_challenge_hospital.application.dtos.internal.HistoricoMedicoDto;
-import fiap.adj.fase3.tech_challenge_hospital.application.dtos.request.FiltroHistoricoMedico;
-import fiap.adj.fase3.tech_challenge_hospital.application.usecases.HistoricoMedicoPresenter;
+import fiap.adj.fase3.tech_challenge_hospital.infrastructure.presenters.HistoricoMedicoPresenter;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.HistoricoMedicoOutputPort;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.repositories.HistoricoMedicoRepository;
 import lombok.RequiredArgsConstructor;

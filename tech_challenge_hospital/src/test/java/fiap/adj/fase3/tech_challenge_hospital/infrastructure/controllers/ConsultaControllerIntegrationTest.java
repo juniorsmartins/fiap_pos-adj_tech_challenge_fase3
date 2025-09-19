@@ -24,6 +24,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,6 +93,10 @@ class ConsultaControllerIntegrationTest extends BaseIntegrationTest {
         var dataHora2 = LocalDateTime.of(LocalDate.of(2025, 9, 5), LocalTime.of(16, 12));
         consultaDao2 = UtilConsultaTest.montarConsultaDao(dataHora2, ConsultaStatusEnum.AGENDADO.getValue(), medicoDao2, pacienteDao1);
         repository.save(consultaDao2);
+
+        var dataHora3 = LocalDateTime.of(LocalDate.of(2025, 10, 1), LocalTime.of(10, 30));
+        ConsultaDao consultaDao3 = UtilConsultaTest.montarConsultaDao(dataHora3, ConsultaStatusEnum.AGENDADO.getValue(), medicoDao1, pacienteDao2);
+        repository.save(consultaDao3);
     }
 
     @Nested
@@ -119,6 +125,26 @@ class ConsultaControllerIntegrationTest extends BaseIntegrationTest {
             assertEquals(ConsultaStatusEnum.AGENDADO.getValue(), dadoSalvo.getStatus());
             assertEquals(request.getMedicoId(), dadoSalvo.getMedico().getId());
             assertEquals(request.getPacienteId(), dadoSalvo.getPaciente().getId());
+        }
+
+        @Test
+        @WithMockUser(roles = "MEDICO")
+        void dadoUsuarioMedico_quandoCriarConsulta_entaoLancarAccessDeniedException() {
+            var request = UtilConsultaTest.montarConsultaRequestDto(DATA_HORA_INICIAL, medicoDao1.getId(), pacienteDao1.getId());
+            assertThrows(AccessDeniedException.class, () -> controller.criarConsulta(request));
+        }
+
+        @Test
+        @WithMockUser(roles = "PACIENTE")
+        void dadoUsuarioPaciente_quandoCriarConsulta_entaoLancarAccessDeniedException() {
+            var request = UtilConsultaTest.montarConsultaRequestDto(DATA_HORA_INICIAL, medicoDao1.getId(), pacienteDao1.getId());
+            assertThrows(AccessDeniedException.class, () -> controller.criarConsulta(request));
+        }
+
+        @Test
+        void dadoUsuarioNaoAutenticado_quandoCriarConsulta_entaoLancarAuthenticationException() {
+            var request = UtilConsultaTest.montarConsultaRequestDto(DATA_HORA_INICIAL, medicoDao1.getId(), pacienteDao1.getId());
+            assertThrows(AuthenticationCredentialsNotFoundException.class, () -> controller.criarConsulta(request));
         }
     }
 
@@ -159,20 +185,25 @@ class ConsultaControllerIntegrationTest extends BaseIntegrationTest {
             assertEquals(doBanco.getMedico().getId(), response.medico().id());
             assertEquals(doBanco.getPaciente().getId(), response.paciente().id());
         }
-    }
-
-    @Nested
-    @DisplayName("Consultar")
-    class Consultar {
 
         @Test
-        @WithMockUser(roles = "MEDICO")
-        void dadoIdValido_quandoConsultarPorId_entaoRetornarResponseValido() {
-            var response = controller.consultarConsultaPorId(consultaDao1.getId());
-            assertEquals(consultaDao1.getId(), response.id());
-            assertEquals(consultaDao1.getDataHora(), response.dataHora());
-            assertEquals(consultaDao1.getMedico().getId(), response.medico().id());
-            assertEquals(consultaDao1.getPaciente().getId(), response.paciente().id());
+        @WithMockUser(roles = "ENFERMEIRO")
+        void dadoUsuarioEnfermeiro_quandoAtualizarConsulta_entaoLancarAccessDeniedException() {
+            var request = UtilConsultaTest.montarConsultaRequestDto(DATA_HORA_INICIAL, medicoDao2.getId(), pacienteDao2.getId());
+            assertThrows(AccessDeniedException.class, () -> controller.atualizarConsulta(consultaDao1.getId(), request));
+        }
+
+        @Test
+        @WithMockUser(roles = "PACIENTE")
+        void dadoUsuarioPaciente_quandoAtualizarConsulta_entaoLancarAccessDeniedException() {
+            var request = UtilConsultaTest.montarConsultaRequestDto(DATA_HORA_INICIAL, medicoDao2.getId(), pacienteDao2.getId());
+            assertThrows(AccessDeniedException.class, () -> controller.atualizarConsulta(consultaDao1.getId(), request));
+        }
+
+        @Test
+        void dadoUsuarioNaoAutenticado_quandoAtualizarConsulta_entaoLancarAuthenticationException() {
+            var request = UtilConsultaTest.montarConsultaRequestDto(DATA_HORA_INICIAL, medicoDao2.getId(), pacienteDao2.getId());
+            assertThrows(AuthenticationCredentialsNotFoundException.class, () -> controller.atualizarConsulta(consultaDao1.getId(), request));
         }
     }
 
@@ -224,6 +255,72 @@ class ConsultaControllerIntegrationTest extends BaseIntegrationTest {
             var dadoPosterior = repository.findById(consultaDao1.getId()).orElseThrow();
             assertEquals(ConsultaStatusEnum.CANCELADO.getValue(), dadoPosterior.getStatus());
         }
+
+        @Test
+        @WithMockUser(roles = "ENFERMEIRO")
+        void dadoUsuarioEnfermeiro_quandoCancelarConsulta_entaoRetornarTrue() {
+            var response = controller.cancelarConsulta(consultaDao1.getId());
+            assertTrue(response);
+            var dadoPosterior = repository.findById(consultaDao1.getId()).orElseThrow();
+            assertEquals(ConsultaStatusEnum.CANCELADO.getValue(), dadoPosterior.getStatus());
+        }
+
+        @Test
+        @WithMockUser(roles = "PACIENTE")
+        void dadoUsuarioPaciente_quandoCancelarConsulta_entaoLancarAccessDeniedException() {
+            assertThrows(AccessDeniedException.class, () -> controller.cancelarConsulta(consultaDao1.getId()));
+        }
+
+        @Test
+        void dadoUsuarioNaoAutenticado_quandoCancelarConsulta_entaoLancarAuthenticationException() {
+            assertThrows(AuthenticationCredentialsNotFoundException.class, () -> controller.cancelarConsulta(consultaDao1.getId()));
+        }
+    }
+
+    @Nested
+    @DisplayName("Consultar")
+    class Consultar {
+
+        @Test
+        @WithMockUser(roles = "MEDICO")
+        void dadoIdValido_quandoConsultarPorId_entaoRetornarResponseValido() {
+            var response = controller.consultarConsultaPorId(consultaDao1.getId());
+            assertEquals(consultaDao1.getId(), response.id());
+            assertEquals(consultaDao1.getDataHora(), response.dataHora());
+            assertEquals(consultaDao1.getMedico().getId(), response.medico().id());
+            assertEquals(consultaDao1.getPaciente().getId(), response.paciente().id());
+        }
+
+        @Test
+        @WithMockUser(roles = "ENFERMEIRO")
+        void dadoUsuarioEnfermeiro_quandoConsultarPorId_entaoRetornarResponseValido() {
+            var response = controller.consultarConsultaPorId(consultaDao1.getId());
+            assertEquals(consultaDao1.getId(), response.id());
+            assertEquals(consultaDao1.getDataHora(), response.dataHora());
+            assertEquals(consultaDao1.getMedico().getId(), response.medico().id());
+            assertEquals(consultaDao1.getPaciente().getId(), response.paciente().id());
+        }
+
+        @Test
+        @WithMockUser(username = "username333", roles = "PACIENTE")
+        void dadoUsuarioPacienteCorreto_quandoConsultarPorId_entaoRetornarResponseValido() {
+            var response = controller.consultarConsultaPorId(consultaDao1.getId());
+            assertEquals(consultaDao1.getId(), response.id());
+            assertEquals(consultaDao1.getDataHora(), response.dataHora());
+            assertEquals(consultaDao1.getMedico().getId(), response.medico().id());
+            assertEquals(consultaDao1.getPaciente().getId(), response.paciente().id());
+        }
+
+        @Test
+        @WithMockUser(username = "username444", roles = "PACIENTE")
+        void dadoUsuarioPacienteIncorreto_quandoConsultarPorId_entaoLancarAccessDeniedException() {
+            assertThrows(AccessDeniedException.class, () -> controller.consultarConsultaPorId(consultaDao1.getId()));
+        }
+
+        @Test
+        void dadoUsuarioNaoAutenticado_quandoConsultarPorId_entaoLancarAuthenticationException() {
+            assertThrows(AuthenticationCredentialsNotFoundException.class, () -> controller.consultarConsultaPorId(consultaDao1.getId()));
+        }
     }
 
     @Nested
@@ -235,6 +332,41 @@ class ConsultaControllerIntegrationTest extends BaseIntegrationTest {
         void dadoIdValido_quandoListarHistoricoDeConsultasPorIdPaciente_entaoRetornarListaValida() {
             var colecao = controller.listarHistoricoDeConsultasPorIdPaciente(pacienteDao1.getId());
             assertEquals(2, colecao.size());
+        }
+
+        @Test
+        @WithMockUser(roles = "ENFERMEIRO")
+        void dadoUsuarioEnfermeiro_quandoListarHistoricoDeConsultasPorIdPaciente_entaoRetornarListaValida() {
+            var colecao = controller.listarHistoricoDeConsultasPorIdPaciente(pacienteDao1.getId());
+            assertEquals(2, colecao.size());
+        }
+
+        @Test
+        @WithMockUser(username = "username333", roles = "PACIENTE")
+        void dadoUsuarioPacienteCorreto_quandoListarHistoricoDeConsultasPorIdPaciente_entaoRetornarListaFiltrada() {
+            var colecao = controller.listarHistoricoDeConsultasPorIdPaciente(pacienteDao1.getId());
+            assertEquals(2, colecao.size());
+            assertTrue(colecao.stream().allMatch(consulta -> consulta.paciente()
+                    .user().username().equals("username333")));
+        }
+
+        @Test
+        @WithMockUser(username = "username444", roles = "PACIENTE")
+        void dadoUsuarioPacienteIncorreto_quandoListarHistoricoDeConsultasPorIdPaciente_entaoRetornarListaVazia() {
+            var colecao = controller.listarHistoricoDeConsultasPorIdPaciente(pacienteDao1.getId());
+            assertEquals(0, colecao.size());
+        }
+
+        @Test
+        @WithMockUser(roles = "PACIENTE")
+        void dadoIdInvalido_quandoListarHistoricoDeConsultasPorIdPaciente_entaoRetornarListaVazia() {
+            var colecao = controller.listarHistoricoDeConsultasPorIdPaciente(999L);
+            assertEquals(0, colecao.size());
+        }
+
+        @Test
+        void dadoUsuarioNaoAutenticado_quandoListarHistoricoDeConsultasPorIdPaciente_entaoLancarAuthenticationException() {
+            assertThrows(AuthenticationCredentialsNotFoundException.class, () -> controller.listarHistoricoDeConsultasPorIdPaciente(pacienteDao1.getId()));
         }
     }
 
@@ -277,12 +409,12 @@ class ConsultaControllerIntegrationTest extends BaseIntegrationTest {
 
         @Test
         @WithMockUser(roles = "MEDICO")
-        void dadoFiltroValido_quandoPesquisarPorStatusAgendado_entaoRetornarSetComDoisConsultaResponseDto() {
+        void dadoFiltroValido_quandoPesquisarPorStatusAgendado_entaoRetornarSetComConsultaResponseDto() {
             var status = ConsultaStatusEnum.AGENDADO.getValue();
             var filtro = new FiltroConsulta(null, null, status, null, null);
             var response = controller.pesquisarConsulta(filtro);
 
-            assertEquals(2, response.size());
+            assertEquals(3, response.size());
         }
 
         @Test
@@ -313,6 +445,14 @@ class ConsultaControllerIntegrationTest extends BaseIntegrationTest {
 
         @Test
         @WithMockUser(roles = "ENFERMEIRO")
+        void dadoFiltroValido_quandoPesquisarPorPacienteId_entaoRetornarListaValida() {
+            var filtro = new FiltroConsulta(null, null, null, null, pacienteDao1.getId());
+            var response = controller.pesquisarConsulta(filtro);
+            assertEquals(2, response.size());
+        }
+
+        @Test
+        @WithMockUser(roles = "ENFERMEIRO")
         void dadoFiltrosValidosMasComValorInexistente_quandoPesquisarPorStatusAndPacienteId_entaoRetornarSetVazio() {
             var status = ConsultaStatusEnum.CONCLUIDO.getValue();
             var idPaciente1 = consultaDao2.getPaciente().getId();
@@ -320,6 +460,55 @@ class ConsultaControllerIntegrationTest extends BaseIntegrationTest {
             var response = controller.pesquisarConsulta(filtro);
 
             assertEquals(0, response.size());
+        }
+
+        @Test
+        @WithMockUser(username = "username333", roles = "PACIENTE")
+        void dadoFiltroValido_quandoPesquisarPorPacienteIdCorreto_entaoRetornarListaFiltrada() {
+            var filtro = new FiltroConsulta(null, null, null, null, pacienteDao1.getId());
+            var response = controller.pesquisarConsulta(filtro);
+            assertEquals(2, response.size());
+            assertTrue(response.stream().allMatch(consulta -> consulta.paciente().user().username().equals("username333")));
+        }
+
+        @Test
+        @WithMockUser(username = "username444", roles = "PACIENTE")
+        void dadoFiltroValido_quandoPesquisarPorPacienteIdIncorreto_entaoRetornarListaVazia() {
+            var filtro = new FiltroConsulta(null, null, null, null, pacienteDao1.getId());
+            var response = controller.pesquisarConsulta(filtro);
+            assertEquals(0, response.size());
+        }
+
+        @Test
+        @WithMockUser(username = "username333", roles = "PACIENTE")
+        void dadoFiltroValido_quandoPesquisarPorIdConsultaCorreta_entaoRetornarListaComUmaConsulta() {
+            var filtro = new FiltroConsulta(consultaDao1.getId(), null, null, null, null);
+            var response = controller.pesquisarConsulta(filtro);
+            assertEquals(1, response.size());
+            var consulta = response.iterator().next();
+            assertEquals(consultaDao1.getId(), consulta.id());
+        }
+
+        @Test
+        @WithMockUser(username = "username444", roles = "PACIENTE")
+        void dadoFiltroValido_quandoPesquisarPorIdConsultaIncorreta_entaoRetornarListaVazia() {
+            var filtro = new FiltroConsulta(consultaDao1.getId(), null, null, null, null);
+            var response = controller.pesquisarConsulta(filtro);
+            assertEquals(0, response.size());
+        }
+
+        @Test
+        @WithMockUser(roles = "PACIENTE")
+        void dadoFiltroInvalido_quandoPesquisar_entaoRetornarListaVazia() {
+            var filtro = new FiltroConsulta(999L, null, null, null, null);
+            var response = controller.pesquisarConsulta(filtro);
+            assertEquals(0, response.size());
+        }
+
+        @Test
+        void dadoUsuarioNaoAutenticado_quandoPesquisar_entaoLancarAuthenticationException() {
+            var filtro = new FiltroConsulta(null, null, null, null, pacienteDao1.getId());
+            assertThrows(AuthenticationCredentialsNotFoundException.class, () -> controller.pesquisarConsulta(filtro));
         }
     }
 

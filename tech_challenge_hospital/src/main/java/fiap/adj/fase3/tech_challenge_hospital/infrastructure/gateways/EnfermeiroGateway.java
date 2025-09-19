@@ -26,16 +26,16 @@ public class EnfermeiroGateway implements EnfermeiroOutputPort {
                 .orElseThrow();
     }
 
+    @Transactional
+    @Override
+    public void apagarPorId(Long id) {
+        enfermeiroRepository.deleteById(id);
+    }
+
     @Transactional(readOnly = true)
     @Override
     public Optional<EnfermeiroDto> consultarPorId(Long id) {
         return enfermeiroRepository.findById(id)
                 .map(EnfermeiroPresenter::converterDaoParaDto);
-    }
-
-    @Transactional
-    @Override
-    public void apagarPorId(Long id) {
-        enfermeiroRepository.deleteById(id);
     }
 }

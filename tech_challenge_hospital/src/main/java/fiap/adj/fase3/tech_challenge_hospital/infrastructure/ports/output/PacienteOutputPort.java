@@ -8,7 +8,7 @@ public interface PacienteOutputPort {
 
     PacienteDto salvar(PacienteDto dto);
 
-    Optional<PacienteDto> consultarPorId(Long id);
-
     void apagarPorId(Long id);
+
+    Optional<PacienteDto> consultarPorId(Long id);
 }

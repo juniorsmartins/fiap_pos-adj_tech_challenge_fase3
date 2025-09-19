@@ -27,13 +27,13 @@ public class PacienteGateway implements PacienteOutputPort {
     }
 
     @Override
-    public Optional<PacienteDto> consultarPorId(Long id) {
-        return pacienteRepository.findById(id)
-                .map(PacientePresenter::converterDaoParaDto);
+    public void apagarPorId(Long id) {
+        pacienteRepository.deleteById(id);
     }
 
     @Override
-    public void apagarPorId(Long id) {
-        pacienteRepository.deleteById(id);
+    public Optional<PacienteDto> consultarPorId(Long id) {
+        return pacienteRepository.findById(id)
+                .map(PacientePresenter::converterDaoParaDto);
     }
 }

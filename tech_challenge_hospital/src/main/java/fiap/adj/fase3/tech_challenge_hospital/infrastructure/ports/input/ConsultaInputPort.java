@@ -12,9 +12,9 @@ public interface ConsultaInputPort {
 
     ConsultaDto atualizar(Long id, ConsultaRequestDto request, MedicoOutputPort medicoOutputPort, PacienteOutputPort pacienteOutputPort, ConsultaOutputPort consultaOutputPort);
 
-    ConsultaDto consultarPorId(Long id, ConsultaOutputPort consultaOutputPort);
-
     void concluir(Long id, ConsultaOutputPort consultaOutputPort);
 
     void cancelar(Long id, ConsultaOutputPort consultaOutputPort);
+
+    ConsultaDto consultarPorId(Long id, ConsultaOutputPort consultaOutputPort);
 }

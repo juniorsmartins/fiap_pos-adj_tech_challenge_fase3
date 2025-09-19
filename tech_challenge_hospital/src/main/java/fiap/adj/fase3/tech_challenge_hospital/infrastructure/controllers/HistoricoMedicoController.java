@@ -3,7 +3,7 @@ package fiap.adj.fase3.tech_challenge_hospital.infrastructure.controllers;
 import fiap.adj.fase3.tech_challenge_hospital.application.dtos.request.FiltroHistoricoMedico;
 import fiap.adj.fase3.tech_challenge_hospital.application.dtos.request.HistoricoMedicoRequestDto;
 import fiap.adj.fase3.tech_challenge_hospital.application.dtos.response.HistoricoMedicoResponseDto;
-import fiap.adj.fase3.tech_challenge_hospital.application.usecases.HistoricoMedicoPresenter;
+import fiap.adj.fase3.tech_challenge_hospital.infrastructure.presenters.HistoricoMedicoPresenter;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.input.HistoricoMedicoInputPort;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.ConsultaOutputPort;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.HistoricoMedicoOutputPort;

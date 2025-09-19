@@ -49,13 +49,6 @@ public class ConsultaUseCase implements ConsultaInputPort {
 
     @Transactional
     @Override
-    public ConsultaDto consultarPorId(Long id, ConsultaOutputPort consultaOutputPort) {
-        return consultaOutputPort.consultarPorIdAndStatus(id, ConsultaStatusEnum.AGENDADO.getValue())
-                .orElseThrow();
-    }
-
-    @Transactional
-    @Override
     public void concluir(Long id, ConsultaOutputPort consultaOutputPort) {
         consultaOutputPort.consultarPorIdAndStatus(id, ConsultaStatusEnum.AGENDADO.getValue())
                 .ifPresentOrElse(dto -> {
@@ -78,5 +71,12 @@ public class ConsultaUseCase implements ConsultaInputPort {
                 }, () -> {
                     throw new RuntimeException();
                 });
+    }
+
+    @Transactional
+    @Override
+    public ConsultaDto consultarPorId(Long id, ConsultaOutputPort consultaOutputPort) {
+        return consultaOutputPort.consultarPorIdAndStatus(id, ConsultaStatusEnum.AGENDADO.getValue())
+                .orElseThrow();
     }
 }

@@ -1,9 +1,8 @@
-package fiap.adj.fase3.tech_challenge_hospital.application.usecases;
+package fiap.adj.fase3.tech_challenge_hospital.infrastructure.presenters;
 
 import fiap.adj.fase3.tech_challenge_hospital.application.dtos.internal.HistoricoMedicoDto;
 import fiap.adj.fase3.tech_challenge_hospital.application.dtos.response.HistoricoMedicoResponseDto;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.daos.HistoricoMedicoDao;
-import fiap.adj.fase3.tech_challenge_hospital.infrastructure.presenters.ConsultaPresenter;
 
 public final class HistoricoMedicoPresenter {
 
