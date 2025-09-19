@@ -20,14 +20,20 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
@@ -109,6 +115,26 @@ class HistoricoMedicoControllerIntegrationTest extends BaseIntegrationTest {
             assertEquals(doBanco.getExames(), response.exames());
             assertEquals(doBanco.getConsulta().getId(), response.consulta().id());
         }
+
+        @Test
+        @WithMockUser(roles = "ENFERMEIRO")
+        void dadoUsuarioEnfermeiro_quandoCriarHistoricoMedico_entaoLancarAccessDeniedException() {
+            var request = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO, PRESCRICAO, EXAMES, consultaDao1.getId());
+            assertThrows(AccessDeniedException.class, () -> controller.criarHistoricoMedico(request));
+        }
+
+        @Test
+        @WithMockUser(roles = "PACIENTE")
+        void dadoUsuarioPaciente_quandoCriarHistoricoMedico_entaoLancarAccessDeniedException() {
+            var request = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO, PRESCRICAO, EXAMES, consultaDao1.getId());
+            assertThrows(AccessDeniedException.class, () -> controller.criarHistoricoMedico(request));
+        }
+
+        @Test
+        void dadoUsuarioNaoAutenticado_quandoCriarHistoricoMedico_entaoLancarAuthenticationException() {
+            var request = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO, PRESCRICAO, EXAMES, consultaDao1.getId());
+            assertThrows(AuthenticationCredentialsNotFoundException.class, () -> controller.criarHistoricoMedico(request));
+        }
     }
 
     @Nested
@@ -151,6 +177,26 @@ class HistoricoMedicoControllerIntegrationTest extends BaseIntegrationTest {
             assertEquals(doBanco.getExames(), atualizado.exames());
             assertEquals(doBanco.getConsulta().getId(), atualizado.consulta().id());
         }
+
+        @Test
+        @WithMockUser(roles = "ENFERMEIRO")
+        void dadoUsuarioEnfermeiro_quandoAtualizarHistoricoMedico_entaoLancarAccessDeniedException() {
+            var request = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO_ATUAL, PRESCRICAO_ATUAL, EXAMES_ATUAL, consultaDao1.getId());
+            assertThrows(AccessDeniedException.class, () -> controller.atualizarHistoricoMedico(request));
+        }
+
+        @Test
+        @WithMockUser(roles = "PACIENTE")
+        void dadoUsuarioPaciente_quandoAtualizarHistoricoMedico_entaoLancarAccessDeniedException() {
+            var request = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO_ATUAL, PRESCRICAO_ATUAL, EXAMES_ATUAL, consultaDao1.getId());
+            assertThrows(AccessDeniedException.class, () -> controller.atualizarHistoricoMedico(request));
+        }
+
+        @Test
+        void dadoUsuarioNaoAutenticado_quandoAtualizarHistoricoMedico_entaoLancarAuthenticationException() {
+            var request = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO_ATUAL, PRESCRICAO_ATUAL, EXAMES_ATUAL, consultaDao1.getId());
+            assertThrows(AuthenticationCredentialsNotFoundException.class, () -> controller.atualizarHistoricoMedico(request));
+        }
     }
 
     @Nested
@@ -169,6 +215,24 @@ class HistoricoMedicoControllerIntegrationTest extends BaseIntegrationTest {
             var response = controller.listarHistoricoMedicoPorIdPaciente(pacienteDao1.getId());
             assertEquals(2, response.size());
         }
+
+        @Test
+        @WithMockUser(roles = "PACIENTE")
+        void dadoUsuarioPaciente_quandoListarHistoricoPorIdPaciente_entaoLancarAccessDeniedException() {
+            assertThrows(AccessDeniedException.class, () -> controller.listarHistoricoMedicoPorIdPaciente(pacienteDao1.getId()));
+        }
+
+        @Test
+        void dadoUsuarioNaoAutenticado_quandoListarHistoricoPorIdPaciente_entaoLancarAuthenticationException() {
+            assertThrows(AuthenticationCredentialsNotFoundException.class, () -> controller.listarHistoricoMedicoPorIdPaciente(pacienteDao1.getId()));
+        }
+
+        @Test
+        @WithMockUser(roles = "MEDICO")
+        void dadoIdPacienteInvalido_quandoListarHistoricoPorIdPaciente_entaoRetornarSetVazio() {
+            var response = controller.listarHistoricoMedicoPorIdPaciente(999L);
+            assertEquals(0, response.size());
+        }
     }
 
     @Nested
@@ -177,7 +241,7 @@ class HistoricoMedicoControllerIntegrationTest extends BaseIntegrationTest {
 
         @Test
         @WithMockUser(roles = "MEDICO")
-        void dadoIdValido_quandoConsultarHistoricoMedicoPorIdConsulta() {
+        void dadoIdValido_quandoConsultarHistoricoMedicoPorIdConsulta_entaoRetornarResponseValido() {
             var idConsulta = consultaDao1.getId();
             var request1 = UtilHistoricoMedicoTest.montarHistoricoMedicoRequestDto(DIAGNOSTICO, PRESCRICAO, EXAMES, idConsulta);
             controller.criarHistoricoMedico(request1);
@@ -185,6 +249,19 @@ class HistoricoMedicoControllerIntegrationTest extends BaseIntegrationTest {
             assertEquals(DIAGNOSTICO, response.diagnostico());
             assertEquals(PRESCRICAO, response.prescricao());
             assertEquals(EXAMES, response.exames());
+        }
+
+        @Test
+        @WithMockUser(roles = "PACIENTE")
+        void dadoUsuarioPaciente_quandoConsultarHistoricoMedicoPorIdConsulta_entaoLancarAccessDeniedException() {
+            var idConsulta = consultaDao1.getId();
+            assertThrows(AccessDeniedException.class, () -> controller.consultarHistoricoMedicoPorIdConsulta(idConsulta));
+        }
+
+        @Test
+        void dadoUsuarioNaoAutenticado_quandoConsultarHistoricoMedicoPorIdConsulta_entaoLancarAuthenticationException() {
+            var idConsulta = consultaDao1.getId();
+            assertThrows(AuthenticationCredentialsNotFoundException.class, () -> controller.consultarHistoricoMedicoPorIdConsulta(idConsulta));
         }
     }
 
@@ -351,6 +428,19 @@ class HistoricoMedicoControllerIntegrationTest extends BaseIntegrationTest {
             var resultado = controller.pesquisarHistoricoMedico(filtro);
 
             assertEquals(0, resultado.size());
+        }
+
+        @Test
+        @WithMockUser(roles = "PACIENTE")
+        void dadoUsuarioPaciente_quandoPesquisarHistoricoMedico_entaoLancarAccessDeniedException() {
+            var filtro = new FiltroHistoricoMedico(null, null, null, null, consultaDao1.getId());
+            assertThrows(AccessDeniedException.class, () -> controller.pesquisarHistoricoMedico(filtro));
+        }
+
+        @Test
+        void dadoUsuarioNaoAutenticado_quandoPesquisarHistoricoMedico_entaoLancarAuthenticationException() {
+            var filtro = new FiltroHistoricoMedico(null, null, null, null, consultaDao1.getId());
+            assertThrows(AuthenticationCredentialsNotFoundException.class, () -> controller.pesquisarHistoricoMedico(filtro));
         }
     }
 }
