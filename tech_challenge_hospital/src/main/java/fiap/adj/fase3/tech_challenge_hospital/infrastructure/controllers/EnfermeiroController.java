@@ -34,7 +34,7 @@ public class EnfermeiroController {
                 .orElseThrow();
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ROLE_ADMIN", "ROLE_MEDICO", "ROLE_ENFERMEIRO", "ROLE_PACIENTE"})
     @QueryMapping
     public EnfermeiroResponseDto consultarEnfermeiroPorId(@Argument Long id) {
         return enfermeiroOutputPort.consultarPorId(id)

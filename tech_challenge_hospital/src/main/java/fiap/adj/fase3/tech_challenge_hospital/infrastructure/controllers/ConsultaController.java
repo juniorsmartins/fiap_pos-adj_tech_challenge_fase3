@@ -14,7 +14,7 @@ import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Controller;
 
 import java.util.Comparator;
@@ -76,7 +76,10 @@ public class ConsultaController {
         return true;
     }
 
-    @PreAuthorize("hasAnyRole('MEDICO', 'ENFERMEIRO') or (#id == authentication.principal.id)")
+    @PostFilter("hasAnyRole('MEDICO', 'ENFERMEIRO') or "
+            + "(hasRole('PACIENTE') and filterObject.paciente != null "
+            + "and filterObject.paciente.user != null "
+            + "and filterObject.paciente.user.username == authentication.name)")
     @QueryMapping
     public Set<ConsultaResponseDto> listarHistoricoDeConsultasPorIdPaciente(@Argument Long id) {
         return consultaOutputPort.buscarHistoricoDeConsultasPorId(id)
@@ -86,7 +89,10 @@ public class ConsultaController {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    @Secured({"ROLE_MEDICO", "ROLE_ENFERMEIRO"})
+    @PostFilter("hasAnyRole('MEDICO', 'ENFERMEIRO') or "
+            + "(hasRole('PACIENTE') and filterObject.paciente != null "
+            + "and filterObject.paciente.user != null "
+            + "and filterObject.paciente.user.username == authentication.name)")
     @QueryMapping
     public Set<ConsultaResponseDto> pesquisarConsulta(@Argument("filtro") FiltroConsulta filtro) {
         return consultaOutputPort.pesquisar(filtro.id(), filtro.dataHora(), filtro.status(), filtro.medicoId(), filtro.pacienteId())

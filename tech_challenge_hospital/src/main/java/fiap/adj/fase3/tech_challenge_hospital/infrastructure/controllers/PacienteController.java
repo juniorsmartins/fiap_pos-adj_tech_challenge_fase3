@@ -34,7 +34,7 @@ public class PacienteController {
                 .orElseThrow();
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ROLE_ADMIN", "ROLE_MEDICO", "ROLE_ENFERMEIRO", "ROLE_PACIENTE"})
     @QueryMapping(value = "consultarPacientePorId")
     public PacienteResponseDto consultarPacientePorId(@Argument Long id) {
         return pacienteOutputPort.consultarPorId(id)
