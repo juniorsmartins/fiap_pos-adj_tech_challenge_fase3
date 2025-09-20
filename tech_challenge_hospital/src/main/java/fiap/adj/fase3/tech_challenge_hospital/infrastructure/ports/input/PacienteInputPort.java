@@ -4,10 +4,11 @@ import fiap.adj.fase3.tech_challenge_hospital.application.dtos.internal.Paciente
 import fiap.adj.fase3.tech_challenge_hospital.application.dtos.request.PacienteRequestDto;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.PacienteOutputPort;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.RoleOutputPort;
+import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.UsuarioOutputPort;
 
 public interface PacienteInputPort {
 
-    PacienteDto criar(PacienteRequestDto request, PacienteOutputPort pacienteOutputPort, RoleOutputPort roleOutputPort);
+    PacienteDto criar(PacienteRequestDto request, PacienteOutputPort pacienteOutputPort, UsuarioOutputPort usuarioOutputPort, RoleOutputPort roleOutputPort);
 
     void apagarPorId(Long id, PacienteOutputPort outputPort);
 

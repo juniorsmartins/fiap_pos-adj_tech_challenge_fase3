@@ -3,9 +3,11 @@ package fiap.adj.fase3.tech_challenge_hospital.application.usecases;
 import fiap.adj.fase3.tech_challenge_hospital.application.dtos.internal.MedicoDto;
 import fiap.adj.fase3.tech_challenge_hospital.application.dtos.request.MedicoRequestDto;
 import fiap.adj.fase3.tech_challenge_hospital.domain.entities.Medico;
+import fiap.adj.fase3.tech_challenge_hospital.domain.entities.Usuario;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.input.MedicoInputPort;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.MedicoOutputPort;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.RoleOutputPort;
+import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.UsuarioOutputPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,8 +18,12 @@ public class MedicoUseCase implements MedicoInputPort {
 
     @Transactional
     @Override
-    public MedicoDto criar(MedicoRequestDto request, MedicoOutputPort medicoOutputPort, RoleOutputPort roleOutputPort) {
+    public MedicoDto criar(MedicoRequestDto request, MedicoOutputPort medicoOutputPort, UsuarioOutputPort usuarioOutputPort, RoleOutputPort roleOutputPort) {
         return Optional.ofNullable(request)
+                .map(dto -> {
+                    Usuario.verificarDuplicidadeUsername(dto.getUser().getUsername(), usuarioOutputPort);
+                    return dto;
+                })
             .map(dto -> Medico.converterRequestParaEntity(dto, roleOutputPort))
             .map(Medico::converterEntityParaDto)
             .map(medicoOutputPort::salvar)

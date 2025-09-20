@@ -5,6 +5,7 @@ import fiap.adj.fase3.tech_challenge_hospital.application.dtos.response.MedicoRe
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.input.MedicoInputPort;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.MedicoOutputPort;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.RoleOutputPort;
+import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.UsuarioOutputPort;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.presenters.MedicoPresenter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -23,13 +24,15 @@ public class MedicoController {
 
     private final MedicoOutputPort medicoOutputPort;
 
+    private final UsuarioOutputPort usuarioOutputPort;
+
     private final RoleOutputPort roleOutputPort;
 
     @Secured({"ROLE_ADMIN"})
     @MutationMapping
     public MedicoResponseDto criarMedico(@Argument MedicoRequestDto request) {
         return Optional.ofNullable(request)
-                .map(dto -> medicoInputPort.criar(dto, medicoOutputPort, roleOutputPort))
+                .map(dto -> medicoInputPort.criar(dto, medicoOutputPort, usuarioOutputPort, roleOutputPort))
                 .map(MedicoPresenter::converterDtoParaResponse)
                 .orElseThrow();
     }

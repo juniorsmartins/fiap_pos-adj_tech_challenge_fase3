@@ -5,6 +5,7 @@ import fiap.adj.fase3.tech_challenge_hospital.application.dtos.response.Enfermei
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.input.EnfermeiroInputPort;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.EnfermeiroOutputPort;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.RoleOutputPort;
+import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.UsuarioOutputPort;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.presenters.EnfermeiroPresenter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -23,13 +24,15 @@ public class EnfermeiroController {
 
     private final EnfermeiroOutputPort enfermeiroOutputPort;
 
+    private final UsuarioOutputPort usuarioOutputPort;
+
     private final RoleOutputPort roleOutputPort;
 
     @Secured({"ROLE_ADMIN"})
     @MutationMapping
     public EnfermeiroResponseDto criarEnfermeiro(@Argument EnfermeiroRequestDto request) {
         return Optional.ofNullable(request)
-                .map(dto -> enfermeiroInputPort.criar(dto, enfermeiroOutputPort, roleOutputPort))
+                .map(dto -> enfermeiroInputPort.criar(dto, enfermeiroOutputPort, usuarioOutputPort, roleOutputPort))
                 .map(EnfermeiroPresenter::converterDtoParaResponse)
                 .orElseThrow();
     }

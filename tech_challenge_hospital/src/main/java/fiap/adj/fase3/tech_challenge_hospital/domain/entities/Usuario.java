@@ -4,6 +4,7 @@ import fiap.adj.fase3.tech_challenge_hospital.application.dtos.internal.UserDto;
 import fiap.adj.fase3.tech_challenge_hospital.application.dtos.request.UserRequestDto;
 import fiap.adj.fase3.tech_challenge_hospital.domain.entities.enums.RoleEnum;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.RoleOutputPort;
+import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.UsuarioOutputPort;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -54,5 +55,11 @@ public final class Usuario {
     public static Usuario converterDtoParaEntity(UserDto dto) {
         var role = Role.converterDtoParaEntity(dto.role());
         return new Usuario(dto.id(), dto.username(), dto.password(), dto.enabled(), role);
+    }
+
+    public static void verificarDuplicidadeUsername(String username, UsuarioOutputPort usuarioOutputPort) {
+        if (usuarioOutputPort.existsByUsername(username)) {
+            throw new RuntimeException("Método = verificarDuplicidadeUsername - Username já existe: %s".formatted(username));
+        }
     }
 }

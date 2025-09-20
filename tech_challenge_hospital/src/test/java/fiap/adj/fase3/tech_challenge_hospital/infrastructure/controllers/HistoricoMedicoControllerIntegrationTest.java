@@ -1,10 +1,5 @@
 package fiap.adj.fase3.tech_challenge_hospital.infrastructure.controllers;
 
-import fiap.adj.fase3.tech_challenge_hospital.kafka.BaseIntegrationTest;
-import fiap.adj.fase3.tech_challenge_hospital.utils.UtilConsultaTest;
-import fiap.adj.fase3.tech_challenge_hospital.utils.UtilHistoricoMedicoTest;
-import fiap.adj.fase3.tech_challenge_hospital.utils.UtilMedicoTest;
-import fiap.adj.fase3.tech_challenge_hospital.utils.UtilPacienteTest;
 import fiap.adj.fase3.tech_challenge_hospital.application.dtos.request.FiltroHistoricoMedico;
 import fiap.adj.fase3.tech_challenge_hospital.domain.entities.enums.ConsultaStatusEnum;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.daos.ConsultaDao;
@@ -14,6 +9,8 @@ import fiap.adj.fase3.tech_challenge_hospital.infrastructure.repositories.Consul
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.repositories.HistoricoMedicoRepository;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.repositories.MedicoRepository;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.repositories.PacienteRepository;
+import fiap.adj.fase3.tech_challenge_hospital.kafka.BaseIntegrationTest;
+import fiap.adj.fase3.tech_challenge_hospital.utils.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,15 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authentication.TestingAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -74,10 +68,12 @@ class HistoricoMedicoControllerIntegrationTest extends BaseIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        MedicoDao medicoDao1 = UtilMedicoTest.montarMedicoDao("MedicoConsulta 1", "username111", "password111");
+        var username1 = UtilUserTest.montarStringAleatoria();
+        MedicoDao medicoDao1 = UtilMedicoTest.montarMedicoDao("MedicoConsulta 1", username1, "password111");
         medicoRepository.save(medicoDao1);
 
-        pacienteDao1 = UtilPacienteTest.montarPacienteDao("PacienteConsulta 1", "paciente1@email.com", "username333", "password333");
+        var username2 = UtilUserTest.montarStringAleatoria();
+        pacienteDao1 = UtilPacienteTest.montarPacienteDao("PacienteConsulta 1", "paciente1@email.com", username2, "password333");
         pacienteRepository.save(pacienteDao1);
 
         var dataHora1 = LocalDateTime.of(LocalDate.of(2025, 8, 10), LocalTime.of(14, 10));

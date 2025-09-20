@@ -3,12 +3,11 @@ package fiap.adj.fase3.tech_challenge_hospital.infrastructure.controllers;
 import fiap.adj.fase3.tech_challenge_hospital.domain.entities.enums.RoleEnum;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.daos.EnfermeiroDao;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.repositories.EnfermeiroRepository;
+import fiap.adj.fase3.tech_challenge_hospital.infrastructure.repositories.UserRepository;
 import fiap.adj.fase3.tech_challenge_hospital.kafka.BaseIntegrationTest;
 import fiap.adj.fase3.tech_challenge_hospital.utils.UtilEnfermeiroTest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import fiap.adj.fase3.tech_challenge_hospital.utils.UtilUserTest;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -23,15 +22,13 @@ class EnfermeiroControllerIntegrationTest extends BaseIntegrationTest {
 
     private static final String NOME_INICIAL = "Enfermeiro Inicial";
 
-    private static final String USERNAME = "username123";
-
     private static final String PASSWORD = "password123";
 
     private static final String NOME_ATUAL = "Enfermeiro Atual";
 
-    private static final String USERNAME_ATUAL = "username999";
-
     private static final String PASSWORD_ATUAL = "password999";
+
+    private String username1;
 
     @Autowired
     private EnfermeiroController controller;
@@ -39,12 +36,22 @@ class EnfermeiroControllerIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private EnfermeiroRepository repository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private EnfermeiroDao enfermeiroDao;
 
     @BeforeEach
     void setUp() {
-        enfermeiroDao = UtilEnfermeiroTest.montarEnfermeiroDao(NOME_INICIAL, USERNAME, PASSWORD);
+        username1 = UtilUserTest.montarStringAleatoria();
+        enfermeiroDao = UtilEnfermeiroTest.montarEnfermeiroDao(NOME_INICIAL, username1, PASSWORD);
         repository.save(enfermeiroDao);
+    }
+
+    @AfterEach
+    void tearDown() {
+        repository.deleteById(enfermeiroDao.getId());
+        userRepository.deleteById(enfermeiroDao.getUser().getId());
     }
 
     @Nested
@@ -54,7 +61,8 @@ class EnfermeiroControllerIntegrationTest extends BaseIntegrationTest {
         @Test
         void dadoRequisicaoValida_quandoCriar_entaoRetornarResponseComDadosValidos() {
             // Arrange
-            var requestDto = UtilEnfermeiroTest.montarEnfermeiroRequestDto(NOME_INICIAL, USERNAME, PASSWORD);
+            var username = UtilUserTest.montarStringAleatoria();
+            var requestDto = UtilEnfermeiroTest.montarEnfermeiroRequestDto(NOME_INICIAL, username, PASSWORD);
             // Act
             var response = controller.criarEnfermeiro(requestDto);
             // Assert
@@ -66,7 +74,8 @@ class EnfermeiroControllerIntegrationTest extends BaseIntegrationTest {
 
         @Test
         void dadoRequisicaoValida_quandoCriar_entaoSalvarDadosValidosNoBanco() {
-            var requestDto = UtilEnfermeiroTest.montarEnfermeiroRequestDto(NOME_INICIAL, USERNAME, PASSWORD);
+            var username = UtilUserTest.montarStringAleatoria();
+            var requestDto = UtilEnfermeiroTest.montarEnfermeiroRequestDto(NOME_INICIAL, username, PASSWORD);
             var response = controller.criarEnfermeiro(requestDto);
             var dadoSalvo = repository.findById(response.id()).orElseThrow();
             assertEquals(requestDto.getNome(), dadoSalvo.getNome());
@@ -122,24 +131,26 @@ class EnfermeiroControllerIntegrationTest extends BaseIntegrationTest {
             var desatualizado = repository.findById(enfermeiroDao.getId());
             assertFalse(desatualizado.isEmpty());
             assertEquals(NOME_INICIAL, desatualizado.get().getNome());
-            assertEquals(USERNAME, desatualizado.get().getUser().getUsername());
+            assertEquals(username1, desatualizado.get().getUser().getUsername());
             assertEquals(PASSWORD, desatualizado.get().getUser().getPassword());
 
-            var atualizado = UtilEnfermeiroTest.montarEnfermeiroRequestDto(NOME_ATUAL, USERNAME_ATUAL, PASSWORD_ATUAL);
+            var username = UtilUserTest.montarStringAleatoria();
+            var atualizado = UtilEnfermeiroTest.montarEnfermeiroRequestDto(NOME_ATUAL, username, PASSWORD_ATUAL);
             var response = controller.atualizarEnfermeiro(enfermeiroDao.getId(), atualizado);
 
             assertEquals(atualizado.getNome(), response.nome());
             assertEquals(atualizado.getUser().getUsername(), response.user().username());
             assertEquals(atualizado.getUser().getPassword(), response.user().password());
             assertNotEquals(NOME_INICIAL, response.nome());
-            assertNotEquals(USERNAME, response.user().username());
+            assertNotEquals(username1, response.user().username());
             assertNotEquals(PASSWORD, response.user().password());
         }
 
         @Test
         void dadoRequisicaoValida_quandoAtualizar_entaoAtualizarNoBanco() {
             var id = enfermeiroDao.getId();
-            var atualizado = UtilEnfermeiroTest.montarEnfermeiroRequestDto(NOME_ATUAL, USERNAME_ATUAL, PASSWORD_ATUAL);
+            var username = UtilUserTest.montarStringAleatoria();
+            var atualizado = UtilEnfermeiroTest.montarEnfermeiroRequestDto(NOME_ATUAL, username, PASSWORD_ATUAL);
             var response = controller.atualizarEnfermeiro(id, atualizado);
 
             var doBanco = repository.findById(id).orElseThrow();
@@ -148,7 +159,7 @@ class EnfermeiroControllerIntegrationTest extends BaseIntegrationTest {
             assertEquals(doBanco.getUser().getUsername(), response.user().username());
             assertEquals(doBanco.getUser().getPassword(), response.user().password());
             assertNotEquals(NOME_INICIAL, doBanco.getNome());
-            assertNotEquals(USERNAME, doBanco.getUser().getUsername());
+            assertNotEquals(username1, doBanco.getUser().getUsername());
             assertNotEquals(PASSWORD, doBanco.getUser().getPassword());
         }
     }
