@@ -801,32 +801,18 @@ sem esperar por grandes revisões.
 
 Prática ágil onde testes são escritos antes do código, seguindo o ciclo Red-Green-Refactor. <br> 
 
-## Collections para Teste
-
-#### Link para a Collection do Postman
-
-O arquivo de coleções de teste do Postman está no diretório "postman": 
-https://github.com/juniorsmartins/fiap_technical_challenge_adj/tree/master/postman
-
-[Link para baixar coleção do Postman - Clique aqui](postman/TechChallenge-ADJ-v8.postman_collection.json)  
-
-#### Descrição dos Testes Manuais
-
-Você precisa subir a aplicação com o comando docker compose up --build -d (mais informações na sessão "Instruções para execução local") e
-depois baixar a coleção do Postman, importá-la no Postman e dar send nas requisições e ver a resposta. Todas as requisições estão prontas
-para execução. A aplicação possui um arquivo, chamado import.sql, responsável por gerar pequena massa de dados para os testes em questão.
-
 
 ## Repositório do Código 
 
-[Link para o repositório do código](https://github.com/juniorsmartins/fiap_technical_challenge_adj)
+[Link para o repositório do código](https://github.com/juniorsmartins/fiap_pos-adj_tech_challenge_fase3)
 
-https://github.com/juniorsmartins/fiap_technical_challenge_adj 
+https://github.com/juniorsmartins/fiap_pos-adj_tech_challenge_fase3
 
 
 ## Vídeos
 
-O vídeo de apresentação e complementares estão no diretório "video" - na raíz do projeto. Entre no diretório para ter acesso.
+O vídeo de apresentação e complementares estão no diretório "videos" - na raíz do projeto. 
+Entre no diretório para ter acesso.
 
 [Ou pode tentar acessar pelo link do diretório](https://github.com/juniorsmartins/fiap_technical_challenge_adj/tree/master/video)
 
