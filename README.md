@@ -88,215 +88,547 @@ independência de tecnologias externas.
 
 Imagem de autoria do responsável pelo projeto. Desenvolvida por meio do software StarUML. 
 
-## Descrição dos Endpoints da API e exemplos
+## Descrição dos Endpoints da API
 
-|       Recurso       |               Endpoint                |                     Descrição                     |
-|---------------------|---------------------------------------|---------------------------------------------------|
-| Cliente             | /api/v1/challenge-user/clientes       | Endpoint para operações de CRUD de Clientes       |
-| Proprietario        | /api/v1/challenge-user/proprietarios  | Endpoint para operações de CRUD de Proprietários  |
-| Restaurante         | /api/v1/challenge-user/restaurantes   | Endpoint para operações de CRUD de Restaurantes   |
-| Item                | /api/v1/challenge-user/itens          | Endpoint para operações de CRUD de Itens          |
+##### schema.graphqls #####
 
-
-| Método    | Endpoint e Requisição                                                                                                          |              Resposta                     |
-|-----------|--------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------|
-| Delete    | http://localhost:9050/api/v1/challenge-user/clientes/6d648275-37d9-4fd3-800f-025a2262ef4d                                      |           204 No Content                  |
-| Get       | http://localhost:9050/api/v1/challenge-user/clientes/a546ef31-d9f4-4ff7-9665-4baed324920b                                      |    200 OK + Json no body (resposta 1)     |
-| Post      | http://localhost:9050/api/v1/challenge-user/clientes                                           (+ Json no body - requisição 1) |  201 Created + Json no body (resposta 2)  |
-| Put       | http://localhost:9050/api/v1/challenge-user/clientes/a90902fa-7cce-4c17-87fd-5cd9c70c9d5a      (+ Json no body - requisição 1) |    200 OK + Json no body (resposta 2)     |
-| Patch     | http://localhost:9050/api/v1/challenge-user/clientes                                           (+ Json no body - requisição 3) |           204 No Content                  |
-| Delete    | http://localhost:9050/api/v1/challenge-user/proprietarios/051f5dc8-74fe-4d2c-81e2-ddea7c515532                                 |           204 No Content                  |
-| Get       | http://localhost:9050/api/v1/challenge-user/proprietarios/eb957f38-90c4-4ef2-850c-229fb1658fcd                                 |    200 OK + Json no body (resposta 3)     |
-| Post      | http://localhost:9050/api/v1/challenge-user/proprietarios                                      (+ Json no body - requisição 2) |  201 Created + Json no body (resposta 4)  |
-| Put       | http://localhost:9050/api/v1/challenge-user/proprietarios/bc11e003-219d-4884-88e9-e2a0b43d42c7 (+ Json no body - requisição 2) |    200 OK + Json no body (resposta 4)     |
-| Patch     | http://localhost:9050/api/v1/challenge-user/proprietarios                                      (+ Json no body - requisição 3) |           204 No Content                  |
-| Delete    | http://localhost:9050/api/v1/challenge-user/restaurantes/6bfe2290-0720-4c58-89d7-902698778e59                                  |           204 No Content                  |
-| Get       | http://localhost:9050/api/v1/challenge-user/restaurantes/b173aa00-d852-4ff2-86aa-ce657136a44a                                  |    200 OK + Json no body (resposta 5)     |
-| Post      | http://localhost:9050/api/v1/challenge-user/restaurantes                                       (+ Json no body - requisição 4) |  201 Created + Json no body (resposta 5)  |
-| Put       | http://localhost:9050/api/v1/challenge-user/restaurantes/63fd1b44-4fd9-4d67-95d9-9a4607409c79  (+ Json no body - requisição 4) |    200 OK + Json no body (resposta 5)     |
-| Delete    | http://localhost:9050/api/v1/challenge-user/itens                                                                              |           204 No Content                  |
-| Get       | http://localhost:9050/api/v1/challenge-user/itens/2fe3e028-7983-437a-9f9a-a1240314167d                                         |    200 OK + Json no body (resposta 6)     |
-| Post      | http://localhost:9050/api/v1/challenge-user/itens                                              (+ Json no body - requisição 5) |  201 Created + Json no body (resposta 6)  |
-| Put       | http://localhost:9050/api/v1/challenge-user/itens/350d7035-e940-4394-a0db-72fec01c60b9         (+ Json no body - requisição 5) |    200 OK + Json no body (resposta 6)     |
-
-##### Resposta 1 #####
 ```
-{
-    "usuarioId": "a546ef31-d9f4-4ff7-9665-4baed324920b",
-    "nome": "Carl Friedrich Gauss",
-    "email": "gauss@email.com",
-    "login": "gauss",
-    "senha": "gauss123",
-    "dataHoraCriacao": "2023-10-01T12:00:00.000+00:00",
-    "dataHoraEdicao": "2024-10-01T12:00:00.000+00:00",
-    "endereco": {
-        "enderecoId": "4f50648e-639d-423a-9a46-f4a8d1e96b07",
-        "cep": "69905-169",
-        "logradouro": "Travessa Nilo Bezerra",
-        "numero": "500"
-    },
-    "numeroCartaoFidelidade": "4321-1234-001"
+input UserRequestDto {
+    username: String!
+    password: String!
+}
+
+input PacienteRequestDto {
+    nome: String!
+    email: String!
+    user: UserRequestDto!
+}
+
+input MedicoRequestDto {
+    nome: String!
+    user: UserRequestDto!
+}
+
+input EnfermeiroRequestDto {
+    nome: String!
+    user: UserRequestDto!
+}
+
+input ConsultaRequestDto {
+    dataHora: String!
+    medicoId: ID!
+    pacienteId: ID!
+}
+
+input FiltroConsulta {
+    id: ID
+    dataHora: String
+    status: String
+    medicoId: ID
+    pacienteId: ID
+}
+
+input HistoricoMedicoRequestDto {
+    diagnostico: String!
+    prescricao: String!
+    exames: String
+    consultaId: ID!
+}
+
+input FiltroHistoricoMedico {
+    id: ID
+    diagnostico: String
+    prescricao: String
+    exames: String
+    consultaId: ID
+}
+
+
+type RoleResponseDto {
+    id: ID
+    name: String
+}
+
+type UserResponseDto {
+    id: ID
+    username: String
+    password: String
+    enabled: Boolean
+    role: RoleResponseDto
+}
+
+type PacienteResponseDto {
+    id: ID
+    nome: String
+    email: String
+    user: UserResponseDto
+}
+
+type MedicoResponseDto {
+    id: ID
+    nome: String
+    user: UserResponseDto
+}
+
+type EnfermeiroResponseDto {
+    id: ID
+    nome: String
+    user: UserResponseDto
+}
+
+type ConsultaResponseDto {
+    id: ID
+    dataHora: String
+    status: String
+    medico: MedicoResponseDto
+    paciente: PacienteResponseDto
+}
+
+type HistoricoMedicoResponseDto {
+    id: ID
+    diagnostico: String
+    prescricao: String
+    exames: String
+    consulta: ConsultaResponseDto
+}
+
+type Query {
+    consultarPacientePorId(id: ID!): PacienteResponseDto!
+
+    consultarMedicoPorId(id: ID!): MedicoResponseDto!
+
+    consultarEnfermeiroPorId(id: ID!): EnfermeiroResponseDto!
+
+    consultarConsultaPorId(id: ID!): ConsultaResponseDto!
+    listarHistoricoDeConsultasPorIdPaciente(id: ID!): [ConsultaResponseDto!]!
+    pesquisarConsulta(filtro: FiltroConsulta!): [ConsultaResponseDto!]!
+
+    consultarHistoricoMedicoPorIdConsulta(id: ID!): HistoricoMedicoResponseDto!
+    listarHistoricoMedicoPorIdPaciente(id: ID!): [HistoricoMedicoResponseDto!]!
+    pesquisarHistoricoMedico(filtro: FiltroHistoricoMedico!): [HistoricoMedicoResponseDto!]!
+}
+
+type Mutation {
+    criarPaciente(request: PacienteRequestDto!): PacienteResponseDto
+    apagarPaciente(id: ID!): Boolean
+    atualizarPaciente(id: ID!, request: PacienteRequestDto!): PacienteResponseDto
+
+    criarMedico(request: MedicoRequestDto!): MedicoResponseDto
+    apagarMedico(id: ID!): Boolean
+    atualizarMedico(id: ID!, request: MedicoRequestDto!): MedicoResponseDto
+
+    criarEnfermeiro(request: EnfermeiroRequestDto!): EnfermeiroResponseDto
+    apagarEnfermeiro(id: ID!): Boolean
+    atualizarEnfermeiro(id: ID!, request: EnfermeiroRequestDto!): EnfermeiroResponseDto
+
+    criarConsulta(request: ConsultaRequestDto!): ConsultaResponseDto
+    cancelarConsulta(id: ID!): Boolean
+    atualizarConsulta(id: ID!, request: ConsultaRequestDto!): ConsultaResponseDto
+    concluirConsulta(id: ID!): Boolean
+
+    criarHistoricoMedico(request: HistoricoMedicoRequestDto!): HistoricoMedicoResponseDto
+    atualizarHistoricoMedico(request: HistoricoMedicoRequestDto!): HistoricoMedicoResponseDto
 }
 ```
 
-##### Requisição 1 #####
+##### Exemplos #####
+
 ```
-{
-    "nome":"Rozenn Morgat",
-    "email":"morgat@email.com",
-    "login":"morgat",
-    "senha":"morgat123",
-    "numeroCartaoFidelidade": "1234-0000-5514",
-    "endereco": {
-        "cep": "78000-100",
-        "logradouro": "Rua Centro",
-        "numero": "100"
+mutation MyMutation {
+  criarEnfermeiro(
+    request: {nome: "Robert Martin", user: {username: "111", password: "111"}}
+  ) {
+    id
+    nome
+    user {
+      password
+      username
+      id
+      enabled
+      role {
+        id
+        name
+      }
     }
+  }
 }
 ```
 
-##### Resposta 2 #####
 ```
-{
-    "usuarioId": "2827fdc3-ffac-44d9-92ce-b49680914da4",
-    "nome": "Rozenn Morgat",
-    "email": "morgat@email.com",
-    "login": "morgat",
-    "senha": "morgat123",
-    "endereco": {
-        "enderecoId": "ea98e788-ab70-4439-a312-7627a8d70b8b",
-        "cep": "78000-100",
-        "logradouro": "Rua Centro",
-        "numero": "100"
-    },
-    "numeroCartaoFidelidade": "1234-0000-5514"
-}
-```
-
-##### Resposta 3 #####
-```
-{
-    "usuarioId": "eb957f38-90c4-4ef2-850c-229fb1658fcd",
-    "nome": "Linus Pauling",
-    "email": "linus@email.com",
-    "login": "linus",
-    "senha": "linus123",
-    "dataHoraCriacao": "2023-10-01T12:00:00.000+00:00",
-    "dataHoraEdicao": "2024-11-03T12:00:00.000+00:00",
-    "endereco": {
-        "enderecoId": "eac614d5-c70b-4b36-b4c8-7560f6f0eef9",
-        "cep": "69905-169",
-        "logradouro": "Rua Antônio Francisco das Chagas",
-        "numero": "100"
-    },
-    "descricao": "Toda segunda na empresa"
-}
-```
-
-##### Requisição 2 #####
-```
-{
-    "nome": "Mike Beedle",
-    "email": "mike@email.com",
-    "login": "mike12",
-    "senha": "123456",
-    "descricao": "Presente pela tarde",
-    "endereco": {
-        "cep": "78050-120",
-        "logradouro": "Rua Centro 2",
-        "numero": "130"
+utation MyMutation {
+  criarMedico(
+    request: {nome: "Martin Fowler", user: {username: "222", password: "222"}}
+  ) {
+    id
+    nome
+    user {
+      enabled
+      password
+      id
+      username
+      role {
+        id
+        name
+      }
     }
+  }
 }
 ```
 
-##### Resposta 4 #####
 ```
-{
-    "usuarioId": "0bfad517-dd66-49b3-a485-a5d6b105fac7",
-    "nome": "Mike Beedle",
-    "email": "mike@email.com",
-    "login": "mike12",
-    "senha": "123456",
-    "endereco": {
-        "enderecoId": "3ed4a907-ac36-4ea6-b6e7-0d17ba24d7a9",
-        "cep": "78050-120",
-        "logradouro": "Rua Centro 2",
-        "numero": "130"
-    },
-    "descricao": "Presente pela tarde"
-}
-```
-
-##### Requisição 3 #####
-```
-{
-    "usuarioId":"86522917-f507-459a-8ef9-93015089a5b2",
-    "senhaAntiga":"brian123",
-    "senhaNova":"brian123"
-}
-```
-
-##### Requisição 4 #####
-```
-{
-    "nome": "Panela Velha",
-    "tipoCozinhaEnum": "FAST_FOOD",
-    "endereco": {
-        "cep": "78000-100",
-        "logradouro": "Rua Centro",
-        "numero": "100"
-    },
-    "proprietario": "b69e9f12-e489-4751-9b24-a936c4f3c4d2"
-}
-```
-
-##### Resposta 5 #####
-```
-{
-    "restauranteId": "4fc0503e-68f3-42be-be79-b2eed500bd94",
-    "nome": "Panela Velha",
-    "tipoCozinhaEnum": "FAST_FOOD",
-    "endereco": {
-        "enderecoId": "2ca3a63e-1e5d-473f-8ed1-ba14c0f949cd",
-        "cep": "78000-100",
-        "logradouro": "Rua Centro",
-        "numero": "100"
-    },
-    "proprietario": {
-        "usuarioId": "b69e9f12-e489-4751-9b24-a936c4f3c4d2",
-        "nome": "Andrew S. Tanenbaum",
-        "email": "tanenbaum@email.com",
-        "login": "tanenbaum",
-        "senha": "tanenbaum12",
-        "descricao": "Porteiro"
+mutation MyMutation {
+  criarPaciente(
+    request: {nome: "Jeff Sutterland", email: "seu_email@email,.com", user: {username: "333", password: "333"}}
+  ) {
+    email
+    id
+    nome
+    user {
+      enabled
+      id
+      password
+      username
+      role {
+        id
+        name
+      }
     }
+  }
 }
 ```
 
-##### Requisição 5 #####
 ```
-{
-    "nome": "Bife à Milanesa",
-    "descricao": "Carne bovina com ovo",
-    "preco": "232.05",
-    "entrega": true,
-    "foto": "http://link-foto-teste.com"
+mutation MyMutation {
+  atualizarEnfermeiro(
+    id: "1"
+    request: {nome: "Robert Cecil Martin", user: {username: "999", password: "999"}}
+  ) {
+    id
+    nome
+    user {
+      enabled
+      id
+      password
+      username
+      role {
+        id
+        name
+      }
+    }
+  }
 }
 ```
 
-##### Resposta 6 #####
 ```
-{
-    "itemId": "64eb1ea5-f17b-4ddf-8bc0-e58e4ea1fc33",
-    "nome": "Bife à Milanesa",
-    "descricao": "Carne bovina com ovo",
-    "preco": 232.05,
-    "entrega": true,
-    "foto": "http://link-foto-teste.com"
+mutation MyMutation {
+  atualizarMedico(
+    id: "1"
+    request: {nome: "Martin Refactor Fowler", user: {username: "888", password: "888"}}
+  ) {
+    id
+    nome
+    user {
+      enabled
+      id
+      password
+      username
+      role {
+        id
+        name
+      }
+    }
+  }
 }
 ```
 
-Mais informações podem ser adquiridas via Swagger (rode o docker compose): http://localhost:9050/swagger-ui/index.html
+```
+mutation MyMutation {
+  atualizarPaciente(
+    id: "1"
+    request: {nome: "Jeff Scrum Suttherland", email: "seu_email_aqui@gmail.com", user: {username: "777", password: "777"}}
+  ) {
+    email
+    id
+    nome
+    user {
+      enabled
+      id
+      password
+      username
+      role {
+        id
+        name
+      }
+    }
+  }
+}
+```
+
+```
+mutation MyMutation {
+  apagarEnfermeiro(id: "1")
+}
+```
+
+```
+mutation MyMutation {
+  apagarMedico(id: "1")
+}
+```
+
+```
+mutation MyMutation {
+  apagarPaciente(id: "1")
+}
+```
+
+```
+mutation MyMutation {
+  criarConsulta(
+    request: {dataHora: "2025-01-01T10:05:55", medicoId: "1", pacienteId: "1"}
+  ) {
+    dataHora
+    id
+    status
+    medico {
+      nome
+      id
+    }
+    paciente {
+      nome
+      email
+      id
+    }
+  }
+}
+```
+
+```
+mutation MyMutation {
+  criarHistoricoMedico(
+    request: {diagnostico: "Diagnóstico teste", prescricao: "Prescrição Teste", consultaId: "1", exames: "Exame teste"}
+  ) {
+    diagnostico
+    exames
+    id
+    prescricao
+    consulta {
+      dataHora
+      id
+      status
+      medico {
+        nome
+      }
+      paciente {
+        nome
+      }
+    }
+  }
+}
+```
+
+```
+mutation MyMutation {
+  atualizarConsulta(
+    id: "1"
+    request: {dataHora: "2025-02-20T14:30:22", medicoId: "1", pacienteId: "1"}
+  ) {
+    dataHora
+    id
+    status
+    medico {
+      nome
+    }
+    paciente {
+      nome
+      email
+    }
+  }
+}
+```
+
+```
+mutation MyMutation {
+  atualizarHistoricoMedico(
+    request: {diagnostico: "Diagnóstico Atualizado", prescricao: "Prescrição Atualizada", consultaId: "1", exames: "Exames Atualizado"}
+  ) {
+    diagnostico
+    exames
+    id
+    prescricao
+    consulta {
+      status
+      dataHora
+      medico {
+        nome
+      }
+      paciente {
+        nome
+        email
+      }
+    }
+  }
+}
+```
+
+```
+mutation MyMutation {
+  concluirConsulta(id: "1")
+}
+```
+
+```
+mutation MyMutation {
+  cancelarConsulta(id: "2")
+}
+```
+
+```
+query MyQuery {
+  consultarEnfermeiroPorId(id: "1") {
+    id
+    nome
+  }
+}
+```
+
+```
+query MyQuery {
+  consultarMedicoPorId(id: "1") {
+    id
+    nome
+  }
+}
+```
+
+```
+query MyQuery {
+  consultarPacientePorId(id: "1") {
+    email
+    id
+    nome
+  }
+}
+```
+
+```
+query MyQuery {
+  consultarConsultaPorId(id: "2") {
+    dataHora
+    id
+    status
+    medico {
+      nome
+    }
+    paciente {
+      nome
+      email
+    }
+  }
+}
+```
+
+```
+query MyQuery {
+  consultarHistoricoMedicoPorIdConsulta(id: "1") {
+    diagnostico
+    exames
+    id
+    prescricao
+    consulta {
+      id
+      medico {
+        nome
+      }
+      paciente {
+        nome
+        email
+      }
+      status
+    }
+  }
+}
+```
+
+```
+query MyQuery {
+  listarHistoricoDeConsultasPorIdPaciente(id: "1") {
+    dataHora
+    id
+    status
+    medico {
+      nome
+    }
+    paciente {
+      nome
+      email
+    }
+  }
+}
+```
+
+```
+query MyQuery {
+  listarHistoricoMedicoPorIdPaciente(id: "1") {
+    diagnostico
+    exames
+    id
+    prescricao
+    consulta {
+      dataHora
+      id
+      status
+      medico {
+        nome
+      }
+      paciente {
+        email
+        nome
+      }
+    }
+  }
+}
+```
+
+```
+query MyQuery {
+  pesquisarConsulta(filtro: {pacienteId: "1", status: "AGENDADO"}) {
+    dataHora
+    id
+    status
+    medico {
+      nome
+    }
+    paciente {
+      nome
+      email
+    }
+  }
+}
+```
+
+```
+query MyQuery {
+  pesquisarHistoricoMedico(filtro: {consultaId: "1"}) {
+    diagnostico
+    exames
+    id
+    prescricao
+    consulta {
+      id
+      medico {
+        nome
+      }
+      paciente {
+        nome
+        email
+      }
+    }
+  }
+}
+```
+
+Mais informações podem ser adquiridas via Graphql (rode o docker compose): http://localhost:9050/graphiql
 
 
 ## Configuração do Projeto
@@ -304,29 +636,70 @@ Mais informações podem ser adquiridas via Swagger (rode o docker compose): htt
 #### Configuração do Docker Compose
 
 ```
-name: fiap_technical_challenge_adj
-
 volumes:
-  database_user:
-    name: database_user
+  db_hospital:
+    name: db_hospital
 
 networks:
-  net_applications: # conexão com infra-local e acesso a internet - tipo bridge
-    name: net_applications
+  communication: 
+    name: communication
     driver: bridge
 
 services:
 
-  challenge_user:
-    container_name: challenge_user
-    image: juniorsmartins/challenge_user:v0.0.5
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_ENABLE_KRAFT=yes 
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller 
+      - KAFKA_CFG_NODE_ID=1 
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093 
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092 
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT 
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER 
+      - ALLOW_PLAINTEXT_LISTENER=yes 
+    restart: unless-stopped
+    networks:
+      - communication
+
+  notificacoes:
+    container_name: notificacoes
+    image: juniorsmartins/notificacoes:v0.0.1
     build:
-      context: ../challenge_user/
+      context: ../notificacoes
       dockerfile: Dockerfile
       args:
-        APP_NAME: "challenge_user"
-        APP_VERSION: "v0.0.5"
-        APP_DESCRIPTION: "Serviço de Crud de usuários e restaurantes."
+        APP_NAME: "notificacoes"
+        APP_VERSION: "v0.0.1"
+        APP_DESCRIPTION: "Serviço de Notificações."
+    ports:
+      - "9060:9060"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    restart: on-failure
+    networks:
+      - communication
+    depends_on:
+      kafka:
+        condition: service_started
+
+  challenge_hospital:
+    container_name: challenge_hospital
+    image: juniorsmartins/challenge_hospital:v0.0.1
+    build:
+      context: ../tech_challenge_hospital
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: "challenge_hospital"
+        APP_VERSION: "v0.0.1"
+        APP_DESCRIPTION: "Serviço de Crud de hospital."
     ports:
       - "9050:9050"
     deploy:
@@ -335,18 +708,21 @@ services:
           cpus: '1.0'
           memory: 512M
     environment:
-      - DB_HOST=challenge_data_user
-      - DB_NAME=challenge_user
+      - DB_HOST=challenge_database_hospital
+      - DB_NAME=database_hospital
       - DB_PORT=5432
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
     restart: on-failure
     networks:
-      - net_applications
+      - communication
     depends_on:
-      challenge_data_user:
+      challenge_database_hospital:
+        condition: service_started
+      kafka:
         condition: service_started
 
-  challenge_data_user:
-    container_name: challenge_data_user
+  challenge_database_hospital:
+    container_name: challenge_database_hospital
     image: postgres:16.0
     ports:
       - "5501:5432"
@@ -357,13 +733,13 @@ services:
           memory: 512M
     restart: on-failure
     environment:
-      - POSTGRES_DB=challenge_user
+      - POSTGRES_DB=database_hospital
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - database_user:/var/lib/postgresql/data
+      - db_hospital:/var/lib/postgresql/data
     networks:
-      - net_applications
+      - communication
 ```
 
 #### Instruções para execução local
