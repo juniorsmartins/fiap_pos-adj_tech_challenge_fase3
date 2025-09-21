@@ -1,4 +1,4 @@
-# PROJETO: Tech-Challenge-ADJ-Fiap
+# PROJETO: fase 3 - Tech Challenge ADJ
 
 Equipe: Junior Martins (rm364241)
 
@@ -20,39 +20,50 @@ Equipe: Junior Martins (rm364241)
 
 #### Descrição do problema:
 
-Na nossa região, um grupo de restaurantes decidiu contratar estudantes
-para construir um sistema de gestão para seus estabelecimentos. Essa decisão
-foi motivada pelo alto custo de sistemas individuais, o que levou os restaurantes
-a se unirem para desenvolver um sistema único e compartilhado. Esse sistema
-permitirá que os clientes escolham restaurantes com base na comida oferecida,
-em vez de se basearem na qualidade do sistema de gestão.
-
-O objetivo é criar um sistema robusto que permita a todos os restaurantes
-gerenciar eficientemente suas operações, enquanto os clientes poderão
-consultar informações, deixar avaliações e fazer pedidos online. Devido à
-limitação de recursos financeiros, foi acordado que a entrega do sistema será
-realizada em fases, garantindo que cada etapa seja desenvolvida de forma
-cuidadosa e eficaz.
-
-A divisão em fases possibilitará uma implementação gradual e controlada,
-permitindo ajustes e melhorias contínuas conforme o sistema for sendo usado
-e avaliado tanto pelos restaurantes quanto pelos clientes.
+Em um ambiente hospitalar, é essencial contar com sistemas que garantam o 
+agendamento eficaz de consultas, o gerenciamento do histórico de pacientes e 
+o envio de lembretes automáticos para garantir a presença dos pacientes nas 
+consultas. Este sistema deve ser acessível a diferentes tipos de usuários 
+(médicos, enfermeiros e pacientes), com acesso controlado e funcionalidades 
+específicas para cada perfil.
 
 #### Objetivo do projeto:
 
-Desenvolver um backend completo e robusto utilizando o framework Spring Boot, 
-com foco no gerenciamento de Usuários, Restaurantes e Cardápios, incluindo 
-operações de criação, atualização, exclusão e consulta. O projeto será 
-configurado para rodar em um ambiente Docker, utilizando Docker Compose, o 
-que permitirá a orquestração dos serviços e a integração com um banco de dados 
-relacional, como PostgreSQL, MySQL ou H2. A configuração com Docker Compose 
-garantirá que a aplicação seja facilmente replicável e escalável, permitindo a 
-implantação em diversos ambientes de forma consistente e eficiente. Além disso, 
-o projeto será desenvolvido seguindo as melhores práticas de arquitetura e 
-segurança, de modo que o sistema seja não apenas funcional, mas também seguro, 
-escalável e de fácil manutenção. Bem como, são incluídos requisitos técnicos 
-para garantir que o sistema mantenha alta qualidade e organização, com suporte 
-para documentação e testes automatizados
+O objetivo é desenvolver um backend simplificado e modular, com foco em
+segurança e comunicação assíncrona, garantindo que o sistema seja escalável,
+seguro e que utilize boas práticas de autenticação, autorização e comunicação
+entre serviços.
+
+#### Requisitos do Sistema
+
+1. Segurança em Aplicações Java: <br>
+   ● Autenticação com Spring Security: implementar autenticação básica para 
+garantir que cada tipo de usuário tenha acesso controlado às funcionalidades. <br>
+   ● Níveis de Acesso: <br>
+   ○ Médicos: podem visualizar e editar o histórico de consultas. <br>
+   ○ Enfermeiros: podem registrar consultas e acessar o histórico. <br>
+   ○ Pacientes: podem visualizar apenas as suas consultas. <br> <br>
+
+2. Consultas e Histórico do Paciente com GraphQL: <br>
+   ● Implementação de GraphQL: permitir consultas flexíveis sobre o histórico 
+médico, como listar todos os atendimentos de um paciente ou apenas as futuras. <br>
+   ● Serviço de Agendamento: médicos e enfermeiros poderão registrar novas 
+consultas e modificar consultas existentes. <br> <br>
+
+3. Separação em mais de um serviço: <br>
+   ● Serviço de Agendamento: responsável pela criação e edição das consultas. <br>
+   ● Serviço de notificações: envia lembretes automáticos aos pacientes sobre 
+consultas futuras. <br>
+   ● Serviço de histórico (opcional): armazena o histórico de consultas e 
+disponibiliza dados via GraphQL. <br> <br>
+
+4. Comunicação Assíncrona com RabbitMQ ou Kafka: <br>
+   ● RabbitMQ ou Kafka: utilizar uma dessas ferramentas para gerenciar a 
+comunicação assíncrona entre os serviços. <br> 
+   ○ O Serviço de agendamento deve enviar uma mensagem ao serviço de 
+notificações quando uma consulta for criada ou editada. <br>
+   ○ O serviço de notificações processa essa mensagem e envia um lembrete 
+ao paciente. <br>
 
 
 ## Arquitetura do Sistema
