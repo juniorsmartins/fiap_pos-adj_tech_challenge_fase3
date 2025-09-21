@@ -14,8 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration // Marca a classe como fonte de definições de beans - configurações do Spring.
 @EnableWebSecurity // Habilita a segurança web do Spring Security - protege endpoints por padrão.
-@EnableMethodSecurity(securedEnabled = true)
-// Habilita segurança baseada em anotações nos métodos (ex: @PreAuthorize) - controle fino - quem pode chamar o quê.
+@EnableMethodSecurity(securedEnabled = true) // Habilita segurança baseada em anotações nos métodos (ex: @PreAuthorize) - controle fino - quem pode chamar o quê.
 public class SecurityConfig {
 
     @Bean // Configura as políticas de segurança para diferentes endpoints - quem pode acessar o quê
