@@ -814,15 +814,23 @@ https://github.com/juniorsmartins/fiap_pos-adj_tech_challenge_fase3
 O vídeo de apresentação e complementares estão no diretório "videos" - na raíz do projeto. 
 Entre no diretório para ter acesso.
 
-[Ou pode tentar acessar pelo link do diretório](https://github.com/juniorsmartins/fiap_technical_challenge_adj/tree/master/video)
+[Ou pode tentar acessar pelo link do diretório](https://github.com/juniorsmartins/fiap_pos-adj_tech_challenge_fase3/tree/master/videos)
 
 
 ## Notas
 
-1. Tipos de Usuários:
+1. Esquema de Security:
 
 
 2. Esquema de Exceptions:
+
+Não foi construído esquema de tratamento de exceptions, pois não faz parte dos requisitos dessa fase 
+do Tech Challenge. Logo, quando houver requisição com erro, será mostrado retorno de erro padrão. 
+
+3. Use seu email: 
+
+Quando for criar um paciente para testar a aplicação, use seu email para receber as notificações. Foi 
+usado o serviço de email do Spring Boot Mail c/ Gmail.
 
 
 ## Autoria
