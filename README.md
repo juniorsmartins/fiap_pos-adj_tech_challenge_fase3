@@ -750,7 +750,8 @@ services:
 - Passo 4: entre no diretório docker (cd docker);
 - Passo 5: rode o comando no diretório docker: docker compose up --build 
 
-Espere alguns segundos e acesse o link http://localhost:9050/graphiql para efetuar as requisições. <br>
+Espere alguns segundos e acesse o link http://localhost:9050/graphiql para efetuar as requisições. Você 
+precisará logar, use o username "admin" e o password "123". Mais explicações sobre isso na sessão "Notas". <br>
 
 ## Qualidade do Código
 
