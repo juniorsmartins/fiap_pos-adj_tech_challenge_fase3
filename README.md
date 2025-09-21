@@ -42,20 +42,20 @@ garantir que cada tipo de usuário tenha acesso controlado às funcionalidades. 
    ● Níveis de Acesso: <br>
    ○ Médicos: podem visualizar e editar o histórico de consultas. <br>
    ○ Enfermeiros: podem registrar consultas e acessar o histórico. <br>
-   ○ Pacientes: podem visualizar apenas as suas consultas. <br> <br>
+   ○ Pacientes: podem visualizar apenas as suas consultas. <br> 
 
 2. Consultas e Histórico do Paciente com GraphQL: <br>
    ● Implementação de GraphQL: permitir consultas flexíveis sobre o histórico 
 médico, como listar todos os atendimentos de um paciente ou apenas as futuras. <br>
    ● Serviço de Agendamento: médicos e enfermeiros poderão registrar novas 
-consultas e modificar consultas existentes. <br> <br>
+consultas e modificar consultas existentes. <br> 
 
 3. Separação em mais de um serviço: <br>
    ● Serviço de Agendamento: responsável pela criação e edição das consultas. <br>
    ● Serviço de notificações: envia lembretes automáticos aos pacientes sobre 
 consultas futuras. <br>
    ● Serviço de histórico (opcional): armazena o histórico de consultas e 
-disponibiliza dados via GraphQL. <br> <br>
+disponibiliza dados via GraphQL. <br>
 
 4. Comunicação Assíncrona com RabbitMQ ou Kafka: <br>
    ● RabbitMQ ou Kafka: utilizar uma dessas ferramentas para gerenciar a 
@@ -63,7 +63,7 @@ comunicação assíncrona entre os serviços. <br>
    ○ O Serviço de agendamento deve enviar uma mensagem ao serviço de 
 notificações quando uma consulta for criada ou editada. <br>
    ○ O serviço de notificações processa essa mensagem e envia um lembrete 
-ao paciente. <br>
+ao paciente. <br> <br>
 
 
 ## Arquitetura do Sistema
