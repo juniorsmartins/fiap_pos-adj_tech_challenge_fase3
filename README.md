@@ -255,7 +255,7 @@ mutation MyMutation {
 ```
 
 ```
-utation MyMutation {
+mutation MyMutation {
   criarMedico(
     request: {nome: "Martin Fowler", user: {username: "222", password: "222"}}
   ) {
@@ -821,23 +821,8 @@ Entre no diretório para ter acesso.
 
 1. Tipos de Usuários:
 
-O projeto utiliza a Herança como solução para os tipos de usuários. Há uma entidade pai, chamada Usuário, e suas filhas, Cliente e 
-Proprietario. Há estrutura de CRUD para Cliente e há outra para Proprietario. Há uso de polimorfismo para simplificar e não duplicar 
-código. Bem como o uso de generics, conforme o SOLID (Princípio do Aberto-fechado), para facilitar a implementação de novos tipos de 
-usuários sem precisar modificar nada.
 
 2. Esquema de Exceptions:
-
-O projeto usa Herança no esquema de exceções para simplificar o tratamento personalizado e global. Bem como usa internacionalização de 
-mensagens em dois idiomas, Português e Inglês. Podendo, se necessário, facilmente adicionar outros idiomas nas mensagens de retorno de 
-exceções.
-
-3. Esquema de Testes:
-
-O projeto possui um submódulo, chamado acceptanceTest, para os testes de integração/aceitação. Esses testes foram construídos via BDD/TDD 
-com Cucumber. Bem como também há testes unitários construídos com JUnit e Mockito e H2, com cobertura de testes acima de 80%. 
-
-![TechChallenge3](docs/CoberturaDeTestes-v8.png)
 
 
 ## Autoria
