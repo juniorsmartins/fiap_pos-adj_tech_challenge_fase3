@@ -747,9 +747,10 @@ services:
 - Passo 1: clone o projeto;
 - Passo 2: abra o projeto na IDEA;
 - Passo 3: abra o terminal da IDEA;
-- Passo 4: entre no diretório docker;
-- Passo 5: rode o comando no diretório docker: docker compose up --build -d
+- Passo 4: entre no diretório docker (cd docker);
+- Passo 5: rode o comando no diretório docker: docker compose up --build 
 
+Espere alguns segundos e acesse o link http://localhost:9050/graphiql para efetuar as requisições. <br>
 
 ## Qualidade do Código
 
@@ -768,15 +769,12 @@ Prática: Escreva métodos curtos que façam apenas uma coisa e a façam bem. Ev
 Prática: Siga um padrão de formatação consistente, como indentação de 2 ou 4 espaços e organização lógica de classes (atributos,
 construtores, métodos).
 
-- Tratamento de Erros:
-Prática: Use exceções em vez de códigos de erro e forneça mensagens claras. Estruture o tratamento de erros de forma centralizada.
-
 - Evite Duplicação de Código:
 Prática: Refatore trechos duplicados em métodos ou classes reutilizáveis. Use padrões como Template Method ou Strategy
 quando apropriado.
 
-- Testes Unitários:
-Prática: Escreva testes unitários claros e independentes para cada funcionalidade. Use nomes de teste que descrevam o
+- Testes de Integração:
+Prática: Escreva testes claros e independentes para cada funcionalidade. Use nomes de teste que descrevam o
 comportamento esperado.
 
 - Uso de Objetos e Estruturas de Dados:
@@ -791,10 +789,6 @@ ou redundante.
 Prática: Declare variáveis o mais próximo possível de onde são usadas e minimize seu escopo. Evite variáveis globais ou
 com vida longa desnecessária.
 
-- Prefira Imutabilidade:
-Prática: Sempre que possível, use objetos imutáveis e evite alterações de estado após a criação. No Java, utilize final
-e coleções imutáveis.
-
 - Siga Convenções de Nomenclatura:
 Prática: Adote convenções de nomenclatura consistentes com a linguagem e o framework, como camelCase para métodos Java
 e nomes descritivos para endpoints REST.
@@ -803,223 +797,9 @@ e nomes descritivos para endpoints REST.
 Prática: Aplique melhorias contínuas ao código, refatorando pequenos trechos sempre que identificar oportunidades,
 sem esperar por grandes revisões.
 
-
-##### SOLID
-
-1. Princípio da Responsabilidade Única (SRP):
-
-O Princípio da Responsabilidade Única (Single Responsibility Principle) estabelece que uma classe deve ter apenas
-um motivo para mudar, ou seja, deve ser responsável por uma única parte da funcionalidade do sistema, e essa
-responsabilidade deve ser totalmente encapsulada pela classe. Isso reduz o acoplamento, facilita a manutenção e
-melhora a legibilidade do código, já que mudanças em uma responsabilidade específica afetam apenas uma classe.
-
-A aplicação segue uma arquitetura com responsabilidades bem definidas:
-
-Controllers (AbstractCreateController, ClienteCreateController, ProprietarioCreateController): A classe abstrata
-AbstractCreateController lida com a operação Criar de forma genérica, enquanto as subclasses definem endpoints 
-específicos. Isso é uma boa separação, pois o controlador genérico centraliza a lógica comum, e as subclasses 
-configuram o contexto específico. Cada controlador tem a responsabilidade clara de gerenciar requisições HTTP.
-
-UseCases (AbstractCreateUseCase, ClienteCreateUseCase, ProprietarioCreateUseCase): Contêm a lógica de negócio para 
-a operação de criação. A classe abstrata AbstractCreateUseCase lida com a operação de forma genérica,enquanto as 
-subclasses definem contextos específicos. Dessa forma, a subclasse ClienteCreateUseCase é responsável por criar 
-Cliente e a subclasse ProprietarioCreateUseCase é responsável por criar Proprietario. Ou seja, cada
-uma possui um único motivo para mudar. Elas mudarão apenas se mudarem as regras por seu tipo específico de usuário.
-
-Adaptadores (UsuarioCreateAdapter, UsuarioDeleteAdapter, UsuarioFindByIdAdapter): Lidam com a persistência de dados,
-interagindo com o repositório JPA. Cada adaptador lida com uma única operação de acesso a dados (salvar, deletar, buscar),
-alinhando-se ao SRP.
-
-Interfaces como CreateInputPort, UpdateInputPort e DeleteByIdInputPort definem contratos claros para operações 
-específicas, garantindo que cada interface tenha uma única responsabilidade.
-
-As classes ClienteEntity e ProprietarioEntity são responsáveis apenas por representar os dados persistidos, sem conter
-lógica de negócio, o que está alinhado com o SRP.
-
-
-2. Princípio Aberto/Fechado (OCP):
-
-O Princípio Aberto/Fechado (Open/Closed Principle) estabelece que as entidades de software (classes, módulos, funções e
-etc.) devem estar abertas para extensão, mas fechadas para modificação. Novas funcionalidades são adicionadas por meio
-de extensões (como subclasses ou implementações), sem alterar o código existente. Isso significa que o comportamento de
-uma classe pode ser estendido para atender a novos requisitos sem alterar seu código-fonte existente. O OCP promove a
-flexibilidade e a reutilização do código, reduzindo o risco de introduzir erros ao modificar classes já testadas.
-
-Classes Abstratas (AbstractCreateController, AbstractCreateUseCase): O uso de generics (T, E) permite
-adicionar novos tipos de usuários (como Admin ou Funcionario) criando subclasses (AdminCreateController e
-AdminCreateUseCase ou FuncionarioCreateController e FuncionarioCreateUseCase) sem modificar as classes base.
-
-Exemplo: O método create em AbstractCreateController é reutilizado por ClienteCreateController e ProprietarioCreateController 
-sem alterações, permitindo que novos tipos de usuários sejam adicionados por meio de novas subclasses.
-
-Interfaces Genéricas (CreateInputPort, UpdateInputPort e etc.): Interfaces como CreateInputPort<T>, UpdateInputPort<T>, 
-DeleteByIdInputPort<T>, InputMapper<I, U, T>, e OutputMapper<T, O, E> são genéricas, permitindo que diferentes tipos de 
-usuários sejam manipulados sem alterar o contrato definido pelas interfaces. Novos tipos de usuários podem implementar essas 
-interfaces sem alterar o código existente.
-
-Exemplo: A interface CreateInputPort<T> define o método create(T domain), que é implementado por ClienteCreateUseCase e
-ProprietarioCreateUseCase. Isso permite adicionar suporte a novos tipos de usuários (por exemplo, Administrador) criando novas
-implementações da interface, sem modificar o código existente.
-
-Uso de Herança na Camada de Persistência:
-
-A classe abstrata UsuarioEntity define atributos e comportamentos comuns (como nome, email, login, senha, e endereco),
-enquanto ClienteEntity e ProprietarioEntity estendem essa classe para adicionar campos específicos (numeroCartaoFidelidade
-para ClienteEntity e descricao para ProprietarioEntity). Isso permite a extensão para novos tipos de entidades sem alterar
-UsuarioEntity.
-
-Exemplo: A adição de uma nova entidade, como AdministradorEntity, pode ser feita criando uma nova classe que estende
-UsuarioEntity, sem modificar o código existente.
-
-
-3. Princípio da Substituição de Liskov (LSP):
-
-O Princípio de Substituição de Liskov (Liskov Substitution Principle) estabelece que objetos de uma classe derivada devem poder
-substituir objetos da classe base sem alterar o comportamento correto do programa. Em outras palavras, uma subclasse deve ser
-substituível por sua superclasse sem quebrar as expectativas do código que utiliza a superclasse. Isso implica que as subclasses
-devem respeitar os contratos definidos pela superclasse, incluindo pré-condições, pós-condições e invariantes.
-
-As classes ClienteCreateController e ProprietarioCreateController estendem AbstractCreateController, que define métodos genéricos para
-create. Essas subclasses utilizam a implementação genérica da superclasse, passando tipos específicos via parâmetros genéricos.
-
-Conformidade: As subclasses respeitam o contrato da superclasse, pois utilizam os métodos herdados sem alterar seu comportamento.
-Por exemplo, o método create em ClienteCreateController funciona da mesma forma que em AbstractCreateController, apenas com tipos
-específicos mantendo as pré-condições (entrada válida) e pós-condições (retorno de um ResponseEntity com status 201).
-
-As classes ClienteCreateUseCase e ProprietarioCreateUseCase estendem AbstractCreateService e implementam interfaces específicas
-(CreateInputPort, UpdateInputPort, DeleteByIdInputPort). A superclasse define a lógica genérica para operações de negócio, enquanto 
-as subclasses apenas delegam para os métodos herdados.
-
-Conformidade: As subclasses não alteram o comportamento dos métodos herdados, garantindo que qualquer código que utilize AbstractCreateUseCase 
-possa substituir por ClienteCreateUseCase ou ProprietarioCreateUseCase sem quebrar o sistema.
-
-As classes ClienteEntity e ProprietarioEntity estendem UsuarioEntity, que define atributos comuns (usuarioId, nome, email, login,
-senha, endereco). Cada subclasse adiciona atributos específicos (numeroCartaoFidelidade para ClienteEntity e descricao para
-ProprietarioEntity), mas não altera o comportamento ou os contratos da superclasse.
-
-Conformidade: Como UsuarioEntity é uma classe de modelo de dados sem métodos complexos, as subclasses mantêm a compatibilidade com a
-superclasse. Por exemplo, o repositório UsuarioRepository pode manipular instâncias de ClienteEntity ou ProprietarioEntity sem problemas,
-já que ambas respeitam a estrutura definida por UsuarioEntity.
-
-Benefício: Qualquer operação de persistência que utilize o repositório de UsuarioEntity (como buscas) funciona corretamente com 
-ClienteEntity ou ProprietarioEntity.
-
-Interfaces como CreateInputPort<T>, UpdateInputPort<T>, e DeleteByIdInputPort<T> são implementadas com tipos específicos. Essas implementações 
-respeitam os contratos das interfaces, garantindo que métodos como create(T domain) ou deleteById(UUID id) funcionem como esperado.
-
-Conformidade: As implementações específicas não introduzem comportamentos inesperados, permitindo que qualquer código que dependa dessas
-interfaces seja utilizada de forma intercambiável.
-
-
-4. Princípio da Segregação de Interfaces (ISP):
-
-O Princípio de Segregação de Interfaces (Interface Segregation Principle) estabelece que os clientes não devem ser forçados a depender
-de interfaces que não utilizam. Em outras palavras, uma classe não deve ser obrigada a implementar métodos que não são relevantes para
-sua funcionalidade. Interfaces devem ser específicas e coesas, contendo apenas os métodos necessários para um contexto específico,
-reduzindo o acoplamento e facilitando a manutenção. Muitas interfaces específicas são melhores que uma interface geral.
-
-A aplicação define interfaces específicas para diferentes operações de negócio, como CreateInputPort<T>, UpdateInputPort<T>, DeleteByIdInputPort<T> 
-e FindByIdOutputPort<E>. Cada interface contém apenas um método relacionado à sua responsabilidade (por exemplo, create para criação, 
-update para atualização, deleteById para exclusão).
-
-Conformidade: Essas interfaces são coesas e focadas em uma única operação, garantindo que as classes que as implementam não sejam forçadas a 
-implementar métodos desnecessários.
-
-Exemplo: A interface CreateInputPort<T> define apenas o método T create(T domain), e ClienteCreateUseCase implementa apenas esse método para 
-criação, sem precisar de métodos irrelevantes como exclusão ou busca.
-
-Os adaptadores de repositório (classes com o sufixo Adapter) implementam interfaces específicas (CreateOutputPort<E>, DeleteOutputPort<E>, 
-FindByIdOutputPort<E>), cada uma com um único método correspondente à sua função (salvar, excluir, buscar por ID).
-
-Conformidade: Cada adaptador implementa apenas a interface necessária para sua operação, evitando a inclusão de métodos desnecessários.
-
-Benefício: Isso reduz o acoplamento e garante que os adaptadores sejam usados apenas para as operações que suportam.
-
-As interfaces genéricas (CreateInputPort<T>, InputMapper<I, U, T>, etc.) permitem que diferentes tipos de entidades (Cliente e Proprietario) 
-sejam manipulados sem forçar a implementação de métodos irrelevantes. 
-
-Conformidade: A flexibilidade dos generics garante que as interfaces sejam aplicadas apenas aos tipos relevantes, mantendo a coesão.
-
-
-5. Princípio da Inversão de Dependência (DIP):
-
-O Princípio de Inversão de Dependência (Dependency Inversion Principle) estabelece que: Módulos de alto nível não devem depender de
-módulos de baixo nível; ambos devem depender de abstrações. Abstrações não devem depender de detalhes; detalhes devem depender de
-abstrações.
-
-Isso significa que classes de alto nível (como controllers e usecases) devem interagir com dependências por meio de interfaces ou
-classes abstratas, em vez de classes concretas. Além disso, as implementações concretas devem depender de interfaces, promovendo baixo
-acoplamento, maior flexibilidade e facilidade de substituição de componentes.
-
-A aplicação utiliza interfaces como CreateInputPort<T>, UpdateInputPort<T>, DeleteByIdInputPort<T> e FindByIdOutputPort<E> para 
-definir contratos. Essas interfaces são injetadas em classes de alto nível, como AbstractCreateController, que dependem dessas 
-abstrações em vez de implementações concretas.
-
-Conformidade: AbstractCreateController depende de interfaces como CreateInputPort<T> e OutputMapper<T, O, E>, enquanto as
-implementações concretas são injetadas via injeção de dependências. Isso respeita o DIP, pois o controller (módulo de alto nível) 
-não depende diretamente de classes concretas.
-
-Exemplo: No método create de AbstractCreateController, a lógica utiliza createInputPort.create e outputPresenter.toDtoResponse, sem
-conhecer as implementações específicas.
-
-Conformidade: Em AbstractCreateUseCase, dependências como EntityMapper<T, E>, CreateOutputPort<E> e FindByIdOutputPort<E> são 
-injetadas como interfaces, permitindo que implementações concretas sejam fornecidas pelo contêiner do Spring sem acoplamento direto.
-
-Benefício: Isso facilita a substituição de implementações (por exemplo, trocar um adaptador de banco de dados por um mock em testes)
-sem alterar o código das classes consumidoras.
-
-As interfaces InputMapper<I, U, T>, OutputMapper<T, O, E> e EntityMapper<T, E> são usadas para definir contratos de mapeamento e
-classes como ClienteMapper e ProprietarioMapper implementam essas abstrações.
-
-Conformidade: Classes de alto nível, como AbstractCreateController e AbstractCreateUseCase, dependem dessas interfaces, enquanto as
-implementações concretas são injetadas. Isso segue o DIP, pois os detalhes dependem das abstrações.
-
-
 ##### TDD
 
-Prática ágil onde testes são escritos antes do código, seguindo o ciclo Red-Green-Refactor.
-
-Cucumber: Ferramenta de Behavior-Driven Development (BDD) capaz de escrever especificações em linguagem natural (Gherkin) mapeadas para
-testes automatizados.
-
-- Via Gradle, foi criado um módulo, chamado acceptanceTest, para organizar os testes de aceitação;
-- Nesse módulo, foram escritos cenários em arquivos .feature para descrever o comportamento dos endpoints;
-- E passos Gherkin foram implementados em step definitions Java, interagindo com a API via RestAssured.
-
-Motivos para Considerar Boa Prática
-
-Colaboração: Gherkin permite que stakeholders não técnicos validem requisitos, promovendo uma linguagem ubíqua.
-Documentação Viva: Cenários .feature documentam o comportamento da API, úteis para onboarding e auditorias.
-Foco no Comportamento: Testes validam resultados visíveis (ex.: status 201), não detalhes internos.
-Integração com TDD: Testes de aceitação guiam o desenvolvimento iterativo.
-Manutenibilidade: Step definitions reutilizáveis e testes alinhados com a Arquitetura Hexagonal.
-
-
-##### Design Patterns
-
-Strategy
-
-O Strategy é um padrão de projeto comportamental que permite que você defina uma família de algoritmos, coloque-os em classes separadas,
-e faça os objetos deles intercambiáveis.
-
-O padrão Strategy sugere que você pegue uma classe que faz algo específico em diversas maneiras diferentes e extraia todos esses algoritmos 
-para classes separadas chamadas estratégias.
-
-A classe original, chamada contexto, deve ter um campo para armazenar uma referência para um dessas estratégias. O contexto delega o 
-trabalho para um objeto estratégia ao invés de executá-lo por conta própria.
-
-O contexto não é responsável por selecionar um algoritmo apropriado para o trabalho. Ao invés disso, o cliente passa a estratégia desejada 
-para o contexto. Na verdade, o contexto não sabe muito sobre as estratégias. Ele trabalha com todas elas através de uma interface genérica, 
-que somente expõe um único método para acionar o algoritmo encapsulado dentro da estratégia selecionada.
-
-Desta forma o contexto se torna independente das estratégias concretas, então você pode adicionar novos algoritmos ou modificar os existentes 
-sem modificar o código do contexto ou outras estratégias.
-
-O projeto possui duas classes, chamadas AbstractCreateUseCase e AbstractUpdateUseCase, que implementam o Design Pattern Strategy. Essas duas 
-classes são o contexto, cadastrar e atualizar, e ambos usam a interface UsuarioRulesStrategy, que é composta por várias classes com estratégias 
-de regras específicas, como, por exemplo: não permitir cadastros e atualizações com nomes repetidos, emails repetidos e logins repetidos. São 
-regras que garantes que tais propriedades sejam únicas. 
-
+Prática ágil onde testes são escritos antes do código, seguindo o ciclo Red-Green-Refactor. <br> 
 
 ## Collections para Teste
 
