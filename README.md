@@ -852,8 +852,7 @@ https://github.com/juniorsmartins/fiap_pos-adj_tech_challenge_fase3
 
 ## Vídeos
 
-O vídeo de apresentação e complementares estão no diretório "videos" - na raíz do projeto. 
-Entre no diretório para ter acesso.
+O vídeo de apresentação está no diretório "videos" - na raíz do projeto. Entre no diretório para acessar.
 
 [Ou pode tentar acessar pelo link do diretório](https://github.com/juniorsmartins/fiap_pos-adj_tech_challenge_fase3/tree/master/videos)
 
