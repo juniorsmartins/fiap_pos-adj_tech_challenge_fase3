@@ -872,7 +872,8 @@ Não foi construído sistema de tratamento de exceptions, pois não faz parte do
 do Tech Challenge. Logo, quando houver requisição com erro, será mostrado retorno de erro padrão. 
 
 Observação: todos os endpoints estão funcionando. Todos possuem testes automatizados de integração 
-e também foram testados manualmente. Se surgir algum erro, favor verificar a requisição.
+e também foram testados manualmente. Se surgir algum erro, favor verificar a requisição e o esquema 
+de segurança.
 
 3. Use seu email: 
 
