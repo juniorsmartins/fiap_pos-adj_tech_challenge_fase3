@@ -87,7 +87,7 @@ independência de tecnologias externas.
 
 #### Diagrama Entidade Relacionamento (DER)
 
-![TechChallenge3](docs/DiagramaER-TechChallenge-fase3-v1.png)
+![TechChallengeFase3](docs/DiagramaER-TechChallenge-fase3-v1.png)
 
 Imagens de autoria do responsável pelo projeto. Desenvolvidas por meio do software StarUML. 
 Elas estão armazenadas na pasta "docs" na raíz do projeto.
