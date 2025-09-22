@@ -4,7 +4,6 @@ import fiap.adj.fase3.tech_challenge_hospital.application.dtos.internal.Paciente
 import fiap.adj.fase3.tech_challenge_hospital.application.dtos.request.PacienteRequestDto;
 import fiap.adj.fase3.tech_challenge_hospital.domain.entities.enums.RoleEnum;
 import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.RoleOutputPort;
-import fiap.adj.fase3.tech_challenge_hospital.infrastructure.ports.output.UsuarioOutputPort;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

@@ -2,14 +2,13 @@
 
 Equipe: Junior Martins (rm364241)
 
-
 ## Índice
 1. Introdução;
 2. Arquitetura do Sistema;
-3. Descrição dos Endpoints da API;
-4. Configuração do Projeto;
-5. Qualidade do Código;
-6. Collections para Teste;
+3. Descrição dos Endpoints;
+4. Exemplos para testes;
+5. Configuração do Projeto;
+6. Qualidade do Código;
 7. Repositório do Código;
 8. Vídeos;
 9. Notas;
@@ -831,7 +830,7 @@ do Tech Challenge. Logo, quando houver requisição com erro, será mostrado ret
 3. Use seu email: 
 
 Quando for criar um paciente para testar a aplicação, use seu email para receber as notificações. Foi 
-usado o serviço de email do Spring Boot Mail c/ Gmail.
+usado o serviço de email do Java Mail Sender.
 
 
 ## Autoria
