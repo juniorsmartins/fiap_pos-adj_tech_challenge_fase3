@@ -85,7 +85,7 @@ independência de tecnologias externas.
 
 ![TechChallenge3](docs/DiagramaTechChallenge-fase3-v1.png)
 
-#### Diagrama Entidasde Relacionamento (DER)
+#### Diagrama Entidade Relacionamento (DER)
 
 ![TechChallenge3](docs/DiagramaER-TechChallenge-fase3-v1.png)
 
