@@ -85,8 +85,12 @@ independência de tecnologias externas.
 
 ![TechChallenge3](docs/DiagramaTechChallenge-fase3-v1.png)
 
-Imagem de autoria do responsável pelo projeto. Desenvolvida por meio do software StarUML. A 
-imagem está armazenada na pasta "docs" na raíz do projeto.
+#### Diagrama Entidasde Relacionamento (DER)
+
+![TechChallenge3](docs/DiagramaER-TechChallenge-fase3-v1.png)
+
+Imagens de autoria do responsável pelo projeto. Desenvolvidas por meio do software StarUML. 
+Elas estão armazenadas na pasta "docs" na raíz do projeto.
 
 ## Descrição dos Endpoints
 
