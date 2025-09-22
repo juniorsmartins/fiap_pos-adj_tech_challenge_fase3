@@ -230,7 +230,7 @@ type Mutation {
 }
 ```
 
-##### Exemplos para testes #####
+## Exemplos para testes
 
 ```
 mutation MyMutation {
@@ -856,13 +856,23 @@ Entre no diretório para ter acesso.
 
 ## Notas
 
-1. Esquema de Security:
+1. Esquema de Security: <br>
 
+Existem quatro tipos de usuários: ADMIN, MEDICO, ENFERMEIRO e PACIENTE. É possível ver nos Controllers 
+qual está autorizado para cada endpoint, por meio das anotações: @Secured, @PostAuthorize e @PostFilter.
+
+O usuário ADMIN é criado automaticamente quando a aplicação sobe. O username é "admin" e o password é 
+"123". Esse usuário pode criar outros usuários (médicos, enfermeiros e pacientes). Então use-o para 
+criar, atualizar, apagar e consultar os demais usuários. Para, posteriormente, usar os outros usuários 
+para criar, atualizar, consultar, listar, pesquisar e etc as consultas e históricos médicos.
 
 2. Esquema de Exceptions:
 
-Não foi construído esquema de tratamento de exceptions, pois não faz parte dos requisitos dessa fase 
+Não foi construído sistema de tratamento de exceptions, pois não faz parte dos requisitos dessa fase 
 do Tech Challenge. Logo, quando houver requisição com erro, será mostrado retorno de erro padrão. 
+
+Observação: todos os endpoints estão funcionando. Todos possuem testes automatizados de integração 
+e também foram testados manualmente. Se surgir algum erro, favor verificar a requisição.
 
 3. Use seu email: 
 
