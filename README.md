@@ -83,9 +83,10 @@ independência de tecnologias externas.
 
 #### Diagrama da Arquitetura
 
-![TechChallenge3](docs/DiagramaTechChallenge-v8.png)
+![TechChallenge3](docs/DiagramaTechChallenge-fase3-v1.png)
 
-Imagem de autoria do responsável pelo projeto. Desenvolvida por meio do software StarUML. 
+Imagem de autoria do responsável pelo projeto. Desenvolvida por meio do software StarUML. A 
+imagem está armazenada na pasta "docs" na raíz do projeto.
 
 ## Descrição dos Endpoints da API
 
