@@ -870,6 +870,9 @@ O usuário ADMIN é criado automaticamente quando a aplicação sobe. O username
 criar, atualizar, apagar e consultar os demais usuários. Para, posteriormente, usar os outros usuários 
 para criar, atualizar, consultar, listar, pesquisar e etc as consultas e históricos médicos.
 
+Para trocar de usuário, basta ir para "Logout (http://localhost:9050/logout)", que ele já desloga e 
+te redireciona para novo "Login". O vídeo de apresentação mostra como fazer. 
+
 2. Esquema de Exceptions:
 
 Não foi construído sistema de tratamento de exceptions, pois não faz parte dos requisitos dessa fase 
